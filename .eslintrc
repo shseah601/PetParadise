@@ -5,5 +5,8 @@
   "extends": [
     "plugin:vue-libs/recommended"
   ],
-  "indent": 2
+  "indent": 2,
+  "rules": {
+    "object-curly-spacing": ["error", "always", { "objectsInObjects": true }]
+  }
 }
