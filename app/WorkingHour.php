@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Booking extends Model
+class WorkingHour extends Model
 {
     protected $fillable = [
-      'start_time',
-      'end_time'
+        'day',
+        'start_time',
+        'end_time',
     ];
 }
