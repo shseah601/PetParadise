@@ -19,6 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EmployeesTableDataSeeder::class);
         $this->call(ClientsTableDataSeeder::class);
         $this->call(PetsTableDataSeeder::class);
-
+        Artisan::call('init:roles_abilities');
     }
 }
