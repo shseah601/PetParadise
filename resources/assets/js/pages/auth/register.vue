@@ -8,7 +8,6 @@
             <h3 class="headline mb-0">{{ $t('register') }}</h3>
           </v-card-title>
           <v-card-text>
-
             <!-- Name -->
             <text-input
               :form="form"
@@ -56,7 +55,6 @@
               name="password_confirmation"
               v-validate="'required|confirmed:password'"
             ></password-input>
-
           </v-card-text>
 
           <v-card-actions>
@@ -66,7 +64,6 @@
       </v-card>
     </v-flex>
   </v-layout>
-
 </template>
 
 <script>
@@ -96,7 +93,7 @@ export default {
       const { data } = await this.form.post('/api/register')
 
       // Log in the user.
-      const { data: { token }} = await this.form.post('/api/login')
+      const { data: { token } } = await this.form.post('/api/login')
 
       // Save the token.
       this.$store.dispatch('saveToken', { token })
