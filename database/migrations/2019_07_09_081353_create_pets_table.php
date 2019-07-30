@@ -20,7 +20,8 @@ class CreatePetsTable extends Migration
             $table->string('gender');
             $table->integer('age');
             $table->integer('client_id')->unsigned();
-            $table->timestamps();
+            $table->timestampsTz();
+            $table->softDeletesTz();
 
             $table->foreign('client_id')->references('id')->on('clients');
         });

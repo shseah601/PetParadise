@@ -22,7 +22,8 @@ class CreateEmployeesTable extends Migration
             $table->date('birth_date');
             $table->string('phone');
             $table->integer('user_id')->unsigned();
-            $table->timestamps();
+            $table->timestampsTz();
+            $table->softDeletesTz();
 
             $table->foreign('user_id')->references('id')->on('users');
 

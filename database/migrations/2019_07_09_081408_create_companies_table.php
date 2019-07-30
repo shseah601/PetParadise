@@ -22,7 +22,7 @@ class CreateCompaniesTable extends Migration
             $table->text('title');
             $table->text('description');
             $table->text('image_path');
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

@@ -18,5 +18,11 @@ class ClientsTableDataSeeder extends Seeder
             'phone' => '0182546582',
             'user_id' => 2
         ]);
+        Client::create([
+          'name' => 'Rui Zhe',
+          'address' => '123, Bukit Bintang, 41200 Bintang, KL.',
+          'phone' => '0112444712',
+          'user_id' => 5
+      ]);
     }
 }
