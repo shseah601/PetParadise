@@ -32,5 +32,8 @@
   "new_password": "New Password",
   "password_length_hint": "At least 8 characters",
   "nav_menu_title": "PetParadise Menu",
-  "account": "My account"
+  "account": "My account",
+  "users": "Users",
+  "employees": "Employees",
+  "clients": "Clients"
 }

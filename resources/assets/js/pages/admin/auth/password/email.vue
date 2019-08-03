@@ -56,7 +56,7 @@ export default {
         text: data.status
       })
 
-      this.$router.push({ name: 'welcome' })
+      this.$router.push({ name: 'admin.home' })
     }
   }
 }

@@ -90,7 +90,7 @@ export default {
       if (await this.formHasErrors()) return
 
       // Register the user.
-      const { data } = await this.form.post('/api/register')
+      const { data } = await this.form.post('/api/admin/register')
 
       // Log in the user.
       const { data: { token } } = await this.form.post('/api/login')
@@ -102,7 +102,7 @@ export default {
       await this.$store.dispatch('updateUser', { user: data })
 
       // Redirect home.
-      this.$router.push({ name: 'home' })
+      this.$router.push({ name: 'admin.home' })
     }
   }
 }

@@ -1,47 +1,36 @@
 export default ({ authGuard, guestGuard }) => [
-  { path: '/', name: 'welcome', component: require('~/pages/welcome.vue') },
+  { path: '/admin', redirect: { name: 'admin.home' } },
 
   // Authenticated routes.
   ...authGuard([
-    { path: '/home', name: 'home', component: require('~/pages/home.vue') },
-    { path: '/dashboard', name: 'dashboard', component: require('~/pages/dashboard.vue') },
-    { path: '/calendar', name: 'calendar', component: require('~/pages/calendar.vue') },
-    { path: '/services', name: 'services', component: require('~/pages/services.vue') },
-    { path: '/reports', name: 'reports', component: require('~/pages/reports.vue') },
+    { path: '/admin/home', name: 'admin.home', component: require('~/pages/admin/home.vue') },
+    { path: '/admin/dashboard', name: 'admin.dashboard', component: require('~/pages/admin/dashboard.vue') },
+    { path: '/admin/calendar', name: 'admin.calendar', component: require('~/pages/admin/calendar.vue') },
+    { path: '/admin/services', name: 'admin.services', component: require('~/pages/admin/services.vue') },
+    { path: '/admin/reports', name: 'admin.reports', component: require('~/pages/admin/reports.vue') },
+    { path: '/admin/users/clients', name: 'admin.users.clients', component: require('~/pages/admin/users/clients.vue') },
+    { path: '/admin/users/employees', name: 'admin.users.employees', component: require('~/pages/admin/users/employees.vue') },
+
+    { path: '/admin/company/detail', name: 'admin.company.detail', component: require('~/pages/admin/company/detail.vue') },
+    { path: '/admin/company/workinghour', name: 'admin.company.workinghour', component: require('~/pages/admin/company/workinghour.vue') },
+
     {
-      path: '/user',
-      component: require('~/pages/user/index.vue'),
+      path: '/admin/settings',
+      component: require('~/pages/admin/settings/index.vue'),
       children: [
-        { path: '/client', name: 'user.client', component: require('~/pages/user/client.vue') },
-        { path: '/employee', name: 'user.employee', component: require('~/pages/user/employee.vue') }
-      ]
-    },
-    {
-      path: '/company',
-      component: require('~/pages/company/index.vue'),
-      children: [
-        { path: '', redirect: { name: 'company.detail' } },
-        { path: '/detial', name: 'company.detail', component: require('~/pages/company/detail.vue') },
-        { path: '/workinghour', name: 'company.workinghour', component: require('~/pages/company/workinghour.vue') }
-      ]
-    },
-    {
-      path: '/settings',
-      component: require('~/pages/settings/index.vue'),
-      children: [
-        { path: '', redirect: { name: 'settings.profile' } },
-        { path: 'profile', name: 'settings.profile', component: require('~/pages/settings/profile.vue') },
-        { path: 'password', name: 'settings.password', component: require('~/pages/settings/password.vue') }
+        { path: '', redirect: { name: 'admin.settings.profile' } },
+        { path: 'profile', name: 'admin.settings.profile', component: require('~/pages/admin/settings/profile.vue') },
+        { path: 'password', name: 'admin.settings.password', component: require('~/pages/admin/settings/password.vue') }
       ]
     }
   ]),
 
   // Guest routes.
   ...guestGuard([
-    { path: '/login', name: 'login', component: require('~/pages/auth/login.vue') },
-    { path: '/register', name: 'register', component: require('~/pages/auth/register.vue') },
-    { path: '/password/reset', name: 'password.request', component: require('~/pages/auth/password/email.vue') },
-    { path: '/password/reset/:token', name: 'password.reset', component: require('~/pages/auth/password/reset.vue') }
+    { path: '/login', name: 'admin.login', component: require('~/pages/admin/auth/login.vue') },
+    { path: '/admin/register', name: 'admin.register', component: require('~/pages/admin/auth/register.vue') },
+    { path: '/admin/password/reset', name: 'admin.password.request', component: require('~/pages/admin/auth/password/email.vue') },
+    { path: '/admin/password/reset/:token', name: 'admin.password.reset', component: require('~/pages/admin/auth/password/reset.vue') }
   ]),
 
   { path: '*', component: require('~/pages/errors/404.vue') }

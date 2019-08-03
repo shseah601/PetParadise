@@ -2,18 +2,27 @@
   <v-toolbar fixed app dark clipped-left class="main-toolbar">
     <v-toolbar-side-icon @click.stop="toggleDrawer" v-if="authenticated"></v-toolbar-side-icon>
     <v-toolbar-title>
-      <router-link :to="{ name: 'welcome' }" class="white--text">
-        {{ appName }}
-      </router-link>
+      <router-link :to="{ name: 'admin.home' }" class="white--text">{{ appName }}</router-link>
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
     <!-- Authenticated -->
     <template v-if="authenticated">
       <v-menu origin="center center" offset-y :nudge-bottom="10" transition="scale-transition">
-        <v-btn flat slot="activator"><v-icon left>person</v-icon>{{ user.name }}</v-btn>
+        <v-btn flat slot="activator">
+          <v-icon left>person</v-icon>
+          {{ user.name }}
+        </v-btn>
         <v-list class="pa-0">
-          <v-list-tile v-for="(item,index) in account_items" @click="accountMenuItemClicked(item.action)" ripple="ripple" :disabled="item.disabled" :target="item.target" rel="noopener" :key="index">
+          <v-list-tile
+            v-for="(item,index) in account_items"
+            @click="accountMenuItemClicked(item.action)"
+            ripple="ripple"
+            :disabled="item.disabled"
+            :target="item.target"
+            rel="noopener"
+            :key="index"
+          >
             <v-list-tile-action v-if="item.icon">
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -27,8 +36,8 @@
 
     <!-- Guest -->
     <template v-else>
-      <v-btn flat :to="{ name: 'login' }">{{ $t('login') }}</v-btn>
-      <v-btn flat :to="{ name: 'register' }">{{ $t('register') }}</v-btn>
+      <v-btn flat :to="{ name: 'admin.login' }">{{ $t('login') }}</v-btn>
+      <v-btn flat :to="{ name: 'admin.register' }">{{ $t('register') }}</v-btn>
     </template>
   </v-toolbar>
 </template>
@@ -85,16 +94,16 @@ export default {
       this.busy = false
 
       // Redirect to login.
-      this.$router.push({ name: 'login' })
+      this.$router.push({ name: 'admin.login' })
     },
-    accountMenuItemClicked(action) {
+    accountMenuItemClicked (action) {
       switch (action) {
         case 'profile':
-          this.$router.push({ name: 'settings.profile' })
-          break;
+          this.$router.push({ name: 'admin.settings.profile' })
+          break
         case 'logout':
-          this.logout();
-          break;
+          this.logout()
+          break
       }
     },
   }
@@ -102,8 +111,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-
-.toolbar__title .router-link-active
-  text-decoration: none
-
+.toolbar__title .router-link-active {
+  text-decoration: none;
+}
 </style>

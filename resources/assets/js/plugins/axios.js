@@ -34,7 +34,7 @@ axios.interceptors.response.use(response => response, error => {
     .then(async () => {
       await store.dispatch('logout')
 
-      router.push({ name: 'login' })
+      router.push({ name: 'admin.login' })
     })
   }
 
