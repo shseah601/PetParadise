@@ -8,7 +8,6 @@
             <h3 class="headline mb-0">{{ $t('login') }}</h3>
           </v-card-title>
           <v-card-text>
-
             <!-- Email -->
             <email-input
               :form="form"
@@ -39,16 +38,11 @@
             ></v-checkbox>
 
             <submit-button :block="true" :form="form" :label="$t('login')"></submit-button>
-
           </v-card-text>
           <v-card-actions>
-            <router-link :to="{ name: 'register' }">
-              {{ $t('register') }}
-            </router-link>
+            <router-link :to="{ name: 'admin.register' }">{{ $t('register') }}</router-link>
             <v-spacer></v-spacer>
-            <router-link :to="{ name: 'password.request' }">
-              {{ $t('forgot_password') }}
-            </router-link>
+            <router-link :to="{ name: 'admin.password.request' }">{{ $t('forgot_password') }}</router-link>
           </v-card-actions>
         </form>
       </v-card>
@@ -93,7 +87,7 @@ export default {
       this.busy = false
 
       // Redirect home.
-      this.$router.push({ name: 'home' })
+      this.$router.push({ name: 'admin.home' })
     }
   }
 }

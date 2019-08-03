@@ -84,7 +84,7 @@ function authGuard (routes) {
   return beforeEnter(routes, (to, from, next) => {
     if (!store.getters.authCheck) {
       next({
-        name: 'login',
+        name: 'admin.login',
         query: { redirect: to.fullPath }
       })
     } else {
@@ -102,7 +102,7 @@ function authGuard (routes) {
 function guestGuard (routes) {
   return beforeEnter(routes, (to, from, next) => {
     if (store.getters.authCheck) {
-      next({ name: 'home' })
+      next({ name: 'admin.home' })
     } else {
       next()
     }

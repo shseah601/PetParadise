@@ -11,7 +11,7 @@
     <v-divider></v-divider>
 
     <v-list>
-      <v-list-tile :to="{ name: 'home' }">
+      <v-list-tile :to="{ name: 'admin.home' }">
         <v-list-tile-action>
           <v-icon>home</v-icon>
         </v-list-tile-action>
@@ -78,51 +78,51 @@ export default {
         {
           title: 'Dashboard',
           icon: 'dashboard',
-          route: { name: 'dashboard' }
+          route: { name: 'admin.dashboard' }
         },
         {
           title: 'Account',
           icon: 'account_box',
-          route: { name: 'settings.profile' }
+          route: { name: 'admin.settings.profile' }
         },
         {
           title: 'Calendar',
           icon: 'calendar_today',
-          route: { name: 'calendar' }
+          route: { name: 'admin.calendar' }
         },
         {
           title: 'Services',
           icon: 'room_service',
-          route: { name: 'services' }
+          route: { name: 'admin.services' }
         },
         {
           title: 'Reports',
           icon: 'assessment',
-          route: { name: 'reports' }
+          route: { name: 'admin.reports' }
         }
       ],
       users: [
         {
           title: 'Client',
           icon: 'person',
-          route: { name: 'user.client' }
+          route: { name: 'admin.users.clients' }
         },
         {
           title: 'Employee',
           icon: 'person_outline',
-          route: { name: 'user.employee' }
+          route: { name: 'admin.users.employees' }
         }
       ],
       company: [
         {
           title: 'Company Detail',
           icon: 'art_track',
-          route: { name: 'company.detail' }
+          route: { name: 'admin.company.detail' }
         },
         {
           title: 'Working Hours',
           icon: 'access_time',
-          route: { name: 'company.workinghour' }
+          route: { name: 'admin.company.workinghour' }
         }
       ]
     }

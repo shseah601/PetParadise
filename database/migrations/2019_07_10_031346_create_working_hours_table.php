@@ -18,7 +18,7 @@ class CreateWorkingHoursTable extends Migration
             $table->string('day')->unique();
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

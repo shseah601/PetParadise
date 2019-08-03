@@ -20,7 +20,9 @@ class CreateBookingsTable extends Migration
             $table->integer('employee_id')->unsigned();
             $table->datetime('start_time');
             $table->datetime('end_time');
-            $table->timestamps();
+            $table->string('status');
+            $table->timestampsTz();
+            $table->softDeletesTz();
 
             $table->foreign('client_id')->references('id')->on('clients');
             $table->foreign('pet_id')->references('id')->on('pets');

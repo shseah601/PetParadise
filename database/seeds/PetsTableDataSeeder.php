@@ -19,5 +19,12 @@ class PetsTableDataSeeder extends Seeder
             'age' => '2',
             'client_id' => 1
         ]);
+        Pet::create([
+          'name' => 'Lucky',
+          'type' => 'dog',
+          'gender' => 'F',
+          'age' => '3',
+          'client_id' => 2
+      ]);
     }
 }
