@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\BookingRequest;
 use App\Booking;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\BookingCollection;
-use App\User;
 
 class BookingController extends Controller
 {
@@ -28,7 +28,7 @@ class BookingController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store(BookingRequest $request)
   {
     try {
       $booking = new Booking;
@@ -80,7 +80,7 @@ class BookingController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update(BookingRequest $request, $id)
   {
     try {
       $booking = Booking::findOrFail($id);

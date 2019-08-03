@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\EmployeeRequest;
+use App\Http\Requests\UserRequest;
 use App\Employee;
 use App\Http\Resources\EmployeeResource;
 use App\Http\Resources\EmployeeCollection;
@@ -28,20 +31,23 @@ class EmployeeController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store(UserRequest $request1, EmployeeRequest $request2)
   {
     try {
       $user = new User;
 
-      $user->name = $request->name;
-      $user->email = $request->email;
-      $user->password = bcrypt($request->password);
-      $user->saveOrFail();
+      $user->name = $request1->name;
+      $user->email = $request1->email;
+      $user->password = bcrypt($request1->password);
 
       $employee = new Employee;
-      $employee->fill($request->all());
-      $employee->user_id = $user->id;
-      $employee->saveOrFail();
+      $employee->fill($request2->all());
+
+      DB::transaction(function () use ($user, $employee) {
+        $user->saveOrFail();
+        $employee->user_id = $user->id;
+        $employee->saveOrFail();
+      });
 
       return response()->json([
         'id' => $employee->id,
@@ -85,16 +91,19 @@ class EmployeeController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update(EmployeeRequest $request, $id)
   {
     try {
-      $employee = Client::findOrFail($id);
+      $employee = Employee::findOrFail($id);
+      $user = User::findOrFail($employee->user_id);
 
       $employee->fill($request->all());
+      $user->name = $request->name;
 
-      // DB::transaction(function () use ($employee) {
-      $employee->saveOrFail();
-      // });
+      DB::transaction(function () use ($user, $employee) {
+        $user->saveOrFail();
+        $employee->saveOrFail();
+      });
 
       return response()->json(null, 204);
     } catch (ModelNotFoundException $ex) {

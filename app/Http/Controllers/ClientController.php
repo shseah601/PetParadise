@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\ClientRequest;
+use App\Http\Requests\UserRequest;
 use App\Client;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientCollection;
@@ -22,43 +25,26 @@ class ClientController extends Controller
     return new ClientCollection($clients);
   }
 
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
-  public function store(Request $request)
+  public function register(UserRequest $request1, ClientRequest $request2)
   {
-    try {
-      $user = new User;
+    $user = new User;
+    $user->name = $request1->name;
+    $user->email = $request1->email;
+    $user->password = bcrypt($request1->password);
 
-      $user->name = $request->name;
-      $user->email = $request->email;
-      $user->password = bcrypt($request->password);
+    $client = new Client;
+    $client->fill($request2->all());
+
+    DB::transaction(function () use ($user, $client) {
       $user->saveOrFail();
-
-      $client = new Client;
-      $client->fill($request->all());
       $client->user_id = $user->id;
       $client->saveOrFail();
+    });
 
-      return response()->json([
-          'id' => $client->id,
-          'user_id' => $client->user_id,
-          'created_at' => $client->created_at,
-      ], 201);
-    }
-    catch(QueryException $ex) {
-        return response()->json([
-            'message' => $ex->getMessage(),
-        ], 500);
-    }
-    catch(\Exception $ex) {
-        return response()->json([
-            'message' => $ex->getMessage(),
-        ], 500);
-    }
+    return response()->json([
+      'id' => $client->id,
+      'user_id' => $client->user_id,
+    ], 201);
   }
 
   /**
@@ -87,13 +73,19 @@ class ClientController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update(ClientRequest $request, $id)
   {
     try {
       $client = Client::findOrFail($id);
+      $user = User::findOrFail($client->user_id);
 
       $client->fill($request->all());
-      $client->saveOrFail();
+      $user->name = $request->name;
+
+      DB::transaction(function () use ($user, $client) {
+        $user->saveOrFail();
+        $client->saveOrFail();
+      });
 
       return response()->json(null, 204);
     } catch (ModelNotFoundException $ex) {
