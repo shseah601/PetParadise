@@ -8,9 +8,9 @@ export default ({ authGuard, guestGuard }) => [
     { path: '/admin/calendar', name: 'admin.calendar', component: require('~/pages/admin/calendar.vue') },
     { path: '/admin/services', name: 'admin.services', component: require('~/pages/admin/services.vue') },
     { path: '/admin/reports', name: 'admin.reports', component: require('~/pages/admin/reports.vue') },
+    { path: '/admin/pets', name: 'admin.pets', component: require('~/pages/admin/pets.vue') },
     { path: '/admin/users/clients', name: 'admin.users.clients', component: require('~/pages/admin/users/clients.vue') },
     { path: '/admin/users/employees', name: 'admin.users.employees', component: require('~/pages/admin/users/employees.vue') },
-
     { path: '/admin/company/detail', name: 'admin.company.detail', component: require('~/pages/admin/company/detail.vue') },
     { path: '/admin/company/workinghour', name: 'admin.company.workinghour', component: require('~/pages/admin/company/workinghour.vue') },
 

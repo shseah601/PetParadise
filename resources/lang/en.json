@@ -35,5 +35,8 @@
   "account": "My account",
   "users": "Users",
   "employees": "Employees",
-  "clients": "Clients"
+  "clients": "Clients",
+  "pets": "Pets",
+  "services": "Services",
+  "reports": "Reports"
 }

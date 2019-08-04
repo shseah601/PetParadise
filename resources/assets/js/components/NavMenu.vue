@@ -27,16 +27,12 @@
         </v-list-tile-content>
       </v-list-tile>
 
-      <v-list-group no-action>
-        <v-list-tile slot="activator">
-          <v-list-tile-action>
-            <v-icon light>account_circle</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
+      <v-list-group prepend-icon="account_circle">
+        <template v-slot:activator>
+          <v-list-tile>
             <v-list-tile-title>Users</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
+          </v-list-tile>
+        </template>
         <v-list-tile v-for="(user, i) in users" :key="i" :to="user.route">
           <v-list-tile-action>
             <v-icon light v-html="user.icon"></v-icon>
@@ -46,16 +42,13 @@
           </v-list-tile-content>
         </v-list-tile>
       </v-list-group>
-      <v-list-group no-action>
-        <v-list-tile slot="activator">
-          <v-list-tile-action>
-            <v-icon light>business</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Company</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
 
+      <v-list-group prepend-icon="business">
+        <template v-slot:activator>
+          <v-list-tile>
+            <v-list-tile-title>Company</v-list-tile-title>
+          </v-list-tile>
+        </template>
         <v-list-tile v-for="(item, i) in company" :key="i" :to="item.route">
           <v-list-tile-action>
             <v-icon light v-html="item.icon"></v-icon>
@@ -99,6 +92,11 @@ export default {
           title: 'Reports',
           icon: 'assessment',
           route: { name: 'admin.reports' }
+        },
+        {
+          title: 'Pets',
+          icon: 'pets',
+          route: { name: 'admin.pets' }
         }
       ],
       users: [
