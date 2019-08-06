@@ -22,6 +22,11 @@ class Client extends Model
       return $this->hasMany(Pet::class);
     }
 
+    public function pendingBookings()
+    {
+      return $this->hasMany(PendingBooking::class);
+    }
+
     public function bookings()
     {
       return $this->hasMany(Booking::class);

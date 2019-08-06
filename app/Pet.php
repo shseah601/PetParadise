@@ -17,6 +17,11 @@ class Pet extends Model
     ];
 
     protected $dates = ['deleted_at'];
+
+    public function pendingBookings()
+    {
+      return $this->hasMany(PnedingBooking::class);
+    }
     
     public function bookings()
     {
