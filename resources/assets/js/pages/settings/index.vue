@@ -34,8 +34,8 @@
 </template>
 
 <script>
-import Profile from '~/pages/admin/settings/profile'
-import Password from '~/pages/admin/settings/password'
+import Profile from '~/pages/settings/profile'
+import Password from '~/pages/settings/password'
 
 export default {
   name: 'settings-view',

@@ -76,7 +76,7 @@ export default {
         {
           title: 'Account',
           icon: 'account_box',
-          route: { name: 'admin.settings.profile' }
+          route: { name: 'settings.profile' }
         },
         {
           title: 'Calendar',

@@ -19,7 +19,7 @@ class ClientResource extends JsonResource
         'name' => $this->when(!is_null($this->name), $this->name),
         'address' => $this->when(!is_null($this->address), $this->address),
         'phone' => $this->when(!is_null($this->phone), $this->phone),
-        'user_id' => $this->when(!is_null($this->user_id), $this->user_id),
+        'user' => new UserResource($this->whenLoaded('user')),
         'pets' => PetResource::collection($this->whenLoaded('pets')),
         'bookings' => BookingResource::collection($this->whenLoaded('bookings')),
       ];

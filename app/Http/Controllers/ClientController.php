@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ClientRequest;
 use App\Http\Requests\UserRequest;
 use App\Client;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientCollection;
 use App\User;
+use Bouncer;
 
 class ClientController extends Controller
 {
@@ -20,15 +22,14 @@ class ClientController extends Controller
    */
   public function index()
   {
-    $clients = Client::get();
+    $clients = Client::with('user')->get();
 
     return new ClientCollection($clients);
   }
 
-  public function register(UserRequest $request1, ClientRequest $request2)
+  public function store(UserRequest $request1, ClientRequest $request2)
   {
     $user = new User;
-    $user->name = $request1->name;
     $user->email = $request1->email;
     $user->password = bcrypt($request1->password);
 
@@ -39,6 +40,7 @@ class ClientController extends Controller
       $user->saveOrFail();
       $client->user_id = $user->id;
       $client->saveOrFail();
+      Bouncer::assign('client')->to($user);
     });
 
     return response()->json([
@@ -58,7 +60,14 @@ class ClientController extends Controller
     try {
       $client = Client::with('pets')->with('bookings')->findOrFail($id);
 
-      return new ClientResource($client);
+      if (auth()->user()->can('view', $client))
+      {
+        return new ClientResource($client);
+      } else {
+        return response()->json([
+          'message' => "Not Authorized",
+        ], 401);
+      }
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -80,7 +89,6 @@ class ClientController extends Controller
       $user = User::findOrFail($client->user_id);
 
       $client->fill($request->all());
-      $user->name = $request->name;
 
       DB::transaction(function () use ($user, $client) {
         $user->saveOrFail();
@@ -116,6 +124,7 @@ class ClientController extends Controller
 
       DB::transaction(function () use ($client) {
         $client->delete();
+        $client->user->delete();
       });
 
       return response()->json(null, 204);

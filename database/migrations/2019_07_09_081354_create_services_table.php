@@ -17,6 +17,8 @@ class CreateServicesTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('type');
+            $table->double('price_min');
+            $table->double('price_max');
             $table->string('description');
             $table->string('image');
             $table->string('duration')->nullable();

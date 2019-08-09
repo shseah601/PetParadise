@@ -8,7 +8,6 @@
             <h3 class="headline mb-0">{{ $t('reset_password') }}</h3>
           </v-card-title>
           <v-card-text>
-
             <!-- Email -->
             <email-input
               :form="form"
@@ -18,7 +17,6 @@
               name="email"
               v-validate="'required|email'"
             ></email-input>
-
           </v-card-text>
           <v-card-actions>
             <submit-button :flat="true" :form="form" :label="$t('send_password_reset_link')"></submit-button>
@@ -31,10 +29,11 @@
 
 <script>
 import Form from 'vform'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'email-view',
-  
+
   metaInfo () {
     return { title: this.$t('reset_password') }
   },
@@ -44,6 +43,11 @@ export default {
       email: ''
     })
   }),
+  computed: {
+    ...mapGetters({
+      user: 'authUser'
+    })
+  },
 
   methods: {
     async send () {
@@ -56,7 +60,11 @@ export default {
         text: data.status
       })
 
-      this.$router.push({ name: 'admin.home' })
+      if (this.user.admin || this.user.client) {
+        this.$router.push({ name: 'admin.home' })
+      } else {
+        this.$router.push({ name: 'home' })
+      }
     }
   }
 }

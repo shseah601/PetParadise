@@ -40,9 +40,9 @@
             <submit-button :block="true" :form="form" :label="$t('login')"></submit-button>
           </v-card-text>
           <v-card-actions>
-            <router-link :to="{ name: 'admin.register' }">{{ $t('register') }}</router-link>
+            <router-link :to="{ name: 'register' }">{{ $t('register') }}</router-link>
             <v-spacer></v-spacer>
-            <router-link :to="{ name: 'admin.password.request' }">{{ $t('forgot_password') }}</router-link>
+            <router-link :to="{ name: 'password.request' }">{{ $t('forgot_password') }}</router-link>
           </v-card-actions>
         </form>
       </v-card>
@@ -52,6 +52,7 @@
 
 <script>
 import Form from 'vform'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'login-view',
@@ -67,6 +68,11 @@ export default {
     remember: false,
     busy: false
   }),
+  computed: {
+    ...mapGetters({
+      user: 'authUser'
+    })
+  },
 
   methods: {
     async login () {
@@ -87,7 +93,11 @@ export default {
       this.busy = false
 
       // Redirect home.
-      this.$router.push({ name: 'admin.home' })
+      if (this.user.admin || this.user.client) {
+        this.$router.push({ name: 'admin.home' })
+      } else {
+        this.$router.push({ name: 'home' })
+      }
     }
   }
 }

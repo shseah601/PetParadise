@@ -2,16 +2,29 @@
   <v-toolbar fixed app dark clipped-left class="main-toolbar">
     <v-toolbar-side-icon @click.stop="toggleDrawer" v-if="authenticated"></v-toolbar-side-icon>
     <v-toolbar-title>
-      <router-link :to="{ name: 'admin.home' }" class="white--text">{{ appName }}</router-link>
+      <router-link
+        v-if="user.admin || user.employee"
+        :to="{ name: 'admin.home' }"
+        class="white--text"
+      >{{ appName }}</router-link>
+      <router-link v-else :to="{ name: 'home' }" class="white--text">{{ appName }}</router-link>
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
     <!-- Authenticated -->
     <template v-if="authenticated">
       <v-menu origin="center center" offset-y :nudge-bottom="10" transition="scale-transition">
-        <v-btn flat slot="activator">
+        <v-btn v-if="user.admin" flat slot="activator">
           <v-icon left>person</v-icon>
-          {{ user.name }}
+          {{ user.admin.name }}
+        </v-btn>
+        <v-btn v-if="user.employee" flat slot="activator">
+          <v-icon left>person</v-icon>
+          {{ user.employee.name }}
+        </v-btn>
+        <v-btn v-if="user.client" flat slot="activator">
+          <v-icon left>person</v-icon>
+          {{ user.client.name }}
         </v-btn>
         <v-list class="pa-0">
           <v-list-tile
@@ -36,8 +49,8 @@
 
     <!-- Guest -->
     <template v-else>
-      <v-btn flat :to="{ name: 'admin.login' }">{{ $t('login') }}</v-btn>
-      <v-btn flat :to="{ name: 'admin.register' }">{{ $t('register') }}</v-btn>
+      <v-btn flat :to="{ name: 'login' }">{{ $t('login') }}</v-btn>
+      <v-btn flat :to="{ name: 'register' }">{{ $t('register') }}</v-btn>
     </template>
   </v-toolbar>
 </template>
@@ -70,7 +83,7 @@ export default {
         title: i18n.t('logout'),
         action: 'logout'
       }
-    ],
+    ]
   }),
 
   computed: mapGetters({
@@ -94,18 +107,18 @@ export default {
       this.busy = false
 
       // Redirect to login.
-      this.$router.push({ name: 'admin.login' })
+      this.$router.push({ name: 'login' })
     },
     accountMenuItemClicked (action) {
       switch (action) {
         case 'profile':
-          this.$router.push({ name: 'admin.settings.profile' })
+          this.$router.push({ name: 'settings.profile' })
           break
         case 'logout':
           this.logout()
           break
       }
-    },
+    }
   }
 }
 </script>

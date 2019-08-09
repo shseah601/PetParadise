@@ -45,4 +45,19 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function admin()
+    {
+      return $this->hasOne(Admin::class);
+    }
+
+    public function employee()
+    {
+      return $this->hasOne(Employee::class);
+    }
+
+    public function client()
+    {
+      return $this->hasOne(Client::class);
+    }
 }
