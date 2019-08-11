@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'pets-view',
+  name: 'admin-pets-view',
   metaInfo () {
     return { title: this.$t('pets') }
   }

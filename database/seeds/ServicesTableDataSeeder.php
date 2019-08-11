@@ -18,7 +18,7 @@ class ServicesTableDataSeeder extends Seeder
           'price_min' => 30.00,
           'price_max' => 90.00,
           'description' => 'Want to keep your pet well-groomed without all the hassle? Your pet can relax in the comfort of our place while being pampered!',
-          'image' => 'img/services/pet_grooming.png',
+          'image' => '/img/services/pet-grooming.png',
           'duration' => '1'
         ]);
 
@@ -28,7 +28,7 @@ class ServicesTableDataSeeder extends Seeder
           'price_min' => 50.00,
           'price_max' => 100.00,
           'description' => 'Pets that live in with us are pampered with luxurious private rooms, individual attention and exciting daily activities to keep them happy and healthy.',
-          'image' => 'img/services/pet_boarding.png',
+          'image' => '/img/services/pet-grooming.png',
           'capacity' => '10'
         ]);
     }

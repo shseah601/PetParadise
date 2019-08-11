@@ -3,27 +3,31 @@ import * as types from '../mutation-types'
 
 // state
 export const state = {
-  client: null,
-  clients: []
+  employee: null,
+  employees: []
 }
 
 // mutations
 export const mutations = {
-  [types.CREATE_EMPLOYEE] (state, employees) {
+  [types.CREATE_EMPLOYEE] (state, { employees }) {
   },
-  [types.FETCH_EMPLOYEES] (state, employees) {
+  [types.FETCH_EMPLOYEES] (state, { employees }) {
     state.employees = employees
   },
-  [types.FETCH_EMPLOYEE] (state, employee) {
+  [types.FETCH_EMPLOYEE] (state, { employee }) {
     state.employee = employee
   },
-  [types.UPDATE_EMPLOYEE] (state, employees) {
+  [types.UPDATE_EMPLOYEE] (state, { employees }) {
     // const index = state.clients.indexOf(item => item.id === client.id)
     // state.clients = Object.assign([...state.clients], { [index]: client })
   },
-  [types.DELETE_EMPLOYEE] (state, employees) {
+  [types.DELETE_EMPLOYEE] (state, { employees }) {
     // const index = state.clients.findIndex(item => item.id === client.id)
     // state.clients.splice(index, 1)
+  },
+  [types.CLEAR_EMPLOYEES] (state) {
+    state.employee = null
+    state.employees = []
   }
 
 }
@@ -39,7 +43,7 @@ export const actions = {
     commit(types.FETCH_EMPLOYEES, { employees: data })
   },
   async fetchEmployee ({ commit }, employee) {
-    const { data } = await axios.get('/api/employees/' + employee.id, employee)
+    const { data } = await axios.get('/api/employees/' + employee.id)
     commit(types.FETCH_EMPLOYEE, { employee: data })
   },
   async updateEmployee ({ commit }, employee) {
@@ -54,6 +58,6 @@ export const actions = {
 
 // getters
 export const getters = {
-  employees: state => state.employees,
+  allEmployees: state => state.employees,
   employee: state => state.employee
 }

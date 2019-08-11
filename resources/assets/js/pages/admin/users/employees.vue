@@ -19,22 +19,55 @@
             <v-card-text>
               <v-container grid-list-md>
                 <v-layout wrap>
-                  <v-flex xs12 sm6 md6>
-                    <v-text-field v-model="editedItem.name" :rules="rules.name" label="Employee name" required></v-text-field>
+                  <v-flex xs12 sm12 md12>
+                    <v-text-field
+                      v-model="editedItem.name"
+                      :rules="rules.name"
+                      label="Employee name"
+                      required
+                    ></v-text-field>
                   </v-flex>
-                  <v-flex xs12 sm6 md6>
-                    <v-text-field v-model="editedItem.phone" label="Phone" required></v-text-field>
+                  <v-flex xs12 sm12 md12>
+                    <v-text-field
+                      v-model="editedItem.ic_no"
+                      :rules="rules.ic_no"
+                      label="IC No"
+                      required
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm12 md12>
+                    <v-select
+                      v-model="editedItem.gender"
+                      :items="gender"
+                      :rules="rules.gender"
+                      label="Gender"
+                      required
+                    ></v-select>
                   </v-flex>
                   <v-flex xs12 sm12 md12>
                     <v-text-field
                       v-model="editedItem.user.email"
-                      :readonly="editedIndex != -1"
+                      :disabled="editedIndex != -1"
+                      :rules="(editedIndex != -1) ? [] : rules.email"
                       label="Email"
                       required
                     ></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm12 md12>
-                    <v-text-field v-model="editedItem.address" label="Address" required></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.phone"
+                      :rules="rules.phone"
+                      label="Phone"
+                      required
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm12 md12>
+                    <v-text-field
+                      v-model="editedItem.address"
+                      :rules="rules.address"
+                      label="Address"
+                      required
+                    ></v-text-field>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -42,14 +75,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn :disabled="busy" color="blue darken-1" flat @click="close">Cancel</v-btn>
-              <v-btn
-                :loading="busy"
-                :disabled="!formIsValid || busy"
-                color="blue darken-1"
-                flat
-                type="submit"
-                @click="save"
-              >Save</v-btn>
+              <v-btn :loading="busy" :disabled="busy" color="blue darken-1" flat @click="save">Save</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
@@ -59,8 +85,10 @@
       <v-data-table :headers="headers" :items="employees" class="elevation-1">
         <template v-slot:items="props">
           <td>{{ props.item.name }}</td>
-          <td class="text-xs-left">{{ props.item.phone }}</td>
+          <td class="text-xs-left">{{ props.item.ic_no }}</td>
+          <td class="text-xs-left">{{ props.item.gender }}</td>
           <td class="text-xs-left">{{ props.item.user.email }}</td>
+          <td class="text-xs-left">{{ props.item.phone }}</td>
           <td class="text-xs-left">{{ props.item.address }}</td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
@@ -76,17 +104,19 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'employees-view',
+  name: 'admin-employees-view',
   metaInfo () {
-    return { title: 'Employees' }
+    return { title: this.$t('employees') }
   },
   data: () => ({
     busy: false,
     dialog: false,
     headers: [
       { text: 'Name', align: 'left', value: 'name' },
-      { text: 'Phone', value: 'phone' },
+      { text: 'IC No', value: 'ic_no' },
+      { text: 'Gender', value: 'gender' },
       { text: 'Email', value: 'email' },
+      { text: 'Phone', value: 'phone' },
       { text: 'Address', value: 'address' },
       { text: 'Actions', value: 'name', sortable: false }
     ],
@@ -94,10 +124,12 @@ export default {
     editedIndex: -1,
     editedItem: {
       name: '',
-      phone: '',
+      ic_no: '',
+      gender: '',
       user: {
         email: ''
       },
+      phone: '',
       address: ''
     },
     defaultItem: {
@@ -108,10 +140,30 @@ export default {
       },
       address: ''
     },
+    gender: ['M', 'F'],
     form: Object.assign({}, this.defaultItem),
     rules: {
-      name: [val => (val || '').length > 0 || 'This field is required'],
-      phone: [val => (val || '').length > 0 || 'This field is required']
+      name: [
+        v => !!v || 'Name is required',
+        v => (v && v.length <= 100) || 'Name must be less than 100 characters'
+      ],
+      phone: [
+        v => !!v || 'Phone is required',
+        v => /^(01)[0-46-9][0-9]{7,8}$/.test(v) || 'Phone must be valid'
+      ],
+      email: [
+        v => !!v || 'E-mail is required',
+        v => /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/.test(v) || 'E-mail must be valid'
+      ],
+      address: [
+        v => !!v || 'Address is required'
+      ],
+      ic_no: [
+        v => !!v || 'IC No is required'
+      ],
+      gender: [
+        v => !!v || 'Gender is required'
+      ]
     }
   }),
 
@@ -119,17 +171,9 @@ export default {
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
-    ...mapGetters({
-      allEmployees: 'employees'
-    }),
-    formIsValid () {
-      return (
-        this.form.first &&
-        this.form.last &&
-        this.form.favoriteAnimal &&
-        this.form.terms
-      )
-    }
+    ...mapGetters([
+      'allEmployees'
+    ])
   },
 
   watch: {
@@ -139,13 +183,12 @@ export default {
   },
 
   created () {
-    this.$store.dispatch('fetchEmployees')
     this.initialize()
   },
 
   methods: {
-    async initialize () {
-      this.employees = this.allEmployees.employees.data
+    initialize () {
+      this.employees = this.allEmployees.data
     },
 
     editItem (item) {
@@ -169,13 +212,15 @@ export default {
 
     close () {
       this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
+      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedIndex = -1
+      this.$refs.form.reset()
+
     },
 
     async save () {
+      if (!this.$refs.form.validate()) return
+
       if (this.editedIndex > -1) {
         this.busy = true
         await this.$store.dispatch('updateEmployee', this.editedItem)

@@ -4,7 +4,7 @@
       <v-flex md12>
         <v-card>
           <v-card-text>
-            <p class="display-3">PetParadise</p>
+            <p class="display-3">{{ $t('app_name') }}</p>
             <v-divider></v-divider>
           </v-card-text>
           <v-card-actions>

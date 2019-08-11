@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'reports-view',
+  name: 'admin-reports-view',
   metaInfo () {
     return { title: this.$t('reports') }
   }

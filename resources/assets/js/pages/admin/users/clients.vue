@@ -19,22 +19,39 @@
             <v-card-text>
               <v-container grid-list-md>
                 <v-layout wrap>
-                  <v-flex xs12 sm6 md6>
-                    <v-text-field v-model="editedItem.name" :rules="rules.name" label="Client name" required></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md6>
-                    <v-text-field v-model="editedItem.phone" label="Phone" required></v-text-field>
+                  <v-flex xs12 sm12 md12>
+                    <v-text-field
+                      v-model="editedItem.name"
+                      :counter="100"
+                      :rules="rules.name"
+                      label="Client name"
+                      required
+                    ></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm12 md12>
                     <v-text-field
                       v-model="editedItem.user.email"
                       :readonly="editedIndex != -1"
+                      :rules="(editedIndex != -1) ? [] : rules.email"
                       label="Email"
                       required
                     ></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm12 md12>
-                    <v-text-field v-model="editedItem.address" label="Address" required></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.phone"
+                      :rules="rules.phone"
+                      label="Phone"
+                      required
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm12 md12>
+                    <v-text-field
+                      v-model="editedItem.address"
+                      :rules="rules.address"
+                      label="Address"
+                      required
+                    ></v-text-field>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -42,14 +59,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn :disabled="busy" color="blue darken-1" flat @click="close">Cancel</v-btn>
-              <v-btn
-                :loading="busy"
-                :disabled="!formIsValid || busy"
-                color="blue darken-1"
-                flat
-                type="submit"
-                @click="save"
-              >Save</v-btn>
+              <v-btn :loading="busy" :disabled="busy" color="blue darken-1" flat @click="save">Save</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
@@ -59,8 +69,8 @@
       <v-data-table :headers="headers" :items="clients" class="elevation-1">
         <template v-slot:items="props">
           <td>{{ props.item.name }}</td>
-          <td class="text-xs-left">{{ props.item.phone }}</td>
           <td class="text-xs-left">{{ props.item.user.email }}</td>
+          <td class="text-xs-left">{{ props.item.phone }}</td>
           <td class="text-xs-left">{{ props.item.address }}</td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
@@ -76,21 +86,21 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'clients-view',
+  name: 'admin-clients-view',
   metaInfo () {
-    return { title: 'Clients' }
+    return { title: this.$t('clients') }
   },
   data: () => ({
     busy: false,
     dialog: false,
     headers: [
       { text: 'Name', align: 'left', value: 'name' },
-      { text: 'Phone', value: 'phone' },
       { text: 'Email', value: 'email' },
+      { text: 'Phone', value: 'phone' },
       { text: 'Address', value: 'address' },
       { text: 'Actions', value: 'name', sortable: false }
     ],
-    clients: [],
+    clients: null,
     editedIndex: -1,
     editedItem: {
       name: '',
@@ -110,8 +120,21 @@ export default {
     },
     form: Object.assign({}, this.defaultItem),
     rules: {
-      name: [val => (val || '').length > 0 || 'This field is required'],
-      phone: [val => (val || '').length > 0 || 'This field is required']
+      name: [
+        v => !!v || 'Name is required',
+        v => (v && v.length <= 100) || 'Name must be less than 100 characters'
+      ],
+      phone: [
+        v => !!v || 'Phone is required',
+        v => /^(01)[0-46-9][0-9]{7,8}$/.test(v) || 'Name must be less than 100 characters'
+      ],
+      email: [
+        v => !!v || 'E-mail is required',
+        v => /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/.test(v) || 'E-mail must be valid'
+      ],
+      address: [
+        v => !!v || 'Address is required'
+      ]
     }
   }),
 
@@ -119,17 +142,9 @@ export default {
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
-    ...mapGetters({
-      allClients: 'clients'
-    }),
-    formIsValid () {
-      return (
-        this.form.first &&
-        this.form.last &&
-        this.form.favoriteAnimal &&
-        this.form.terms
-      )
-    }
+    ...mapGetters([
+      'allClients'
+    ])
   },
 
   watch: {
@@ -138,15 +153,14 @@ export default {
     }
   },
 
-  created () {
-    this.$store.dispatch('fetchClients')
+  async created () {
     this.initialize()
   },
 
   methods: {
-    async initialize () {
-      this.clients = this.allClients.clients.data
-      console.log(this.clients)
+
+    initialize () {
+      this.clients = this.allClients.data
     },
 
     editItem (item) {
@@ -159,7 +173,6 @@ export default {
       const index = this.clients.indexOf(item)
       var r = confirm('Are you sure you want to delete this item?') && this.clients.splice(index, 1)
       if (r) {
-        console.log('delete')
         this.busy = true
         await this.$store.dispatch('deleteClient', item)
         this.busy = false
@@ -170,13 +183,14 @@ export default {
 
     close () {
       this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
+      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedIndex = -1
+      this.$refs.form.reset()
     },
 
     async save () {
+      if (!this.$refs.form.validate()) return
+
       if (this.editedIndex > -1) {
         this.busy = true
         await this.$store.dispatch('updateClient', this.editedItem)
@@ -194,7 +208,6 @@ export default {
         await this.$store.dispatch('createClient', newItem)
         this.busy = false
         this.clients.push(this.editedItem)
-        console.log(this.$store.getters.clients)
       }
       this.close()
     }

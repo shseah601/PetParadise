@@ -3,28 +3,20 @@
     <v-toolbar-side-icon @click.stop="toggleDrawer" v-if="authenticated"></v-toolbar-side-icon>
     <v-toolbar-title>
       <router-link
-        v-if="user.admin || user.employee"
+        v-if="role && (role.name == 'admin' || role.name == 'employee')"
         :to="{ name: 'admin.home' }"
         class="white--text"
       >{{ appName }}</router-link>
-      <router-link v-else :to="{ name: 'home' }" class="white--text">{{ appName }}</router-link>
+      <router-link v-else :to="{ name: 'client.home' }" class="white--text">{{ appName }}</router-link>
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
     <!-- Authenticated -->
     <template v-if="authenticated">
       <v-menu origin="center center" offset-y :nudge-bottom="10" transition="scale-transition">
-        <v-btn v-if="user.admin" flat slot="activator">
+        <v-btn flat slot="activator">
           <v-icon left>person</v-icon>
-          {{ user.admin.name }}
-        </v-btn>
-        <v-btn v-if="user.employee" flat slot="activator">
-          <v-icon left>person</v-icon>
-          {{ user.employee.name }}
-        </v-btn>
-        <v-btn v-if="user.client" flat slot="activator">
-          <v-icon left>person</v-icon>
-          {{ user.client.name }}
+          {{ detail.name }}
         </v-btn>
         <v-list class="pa-0">
           <v-list-tile
@@ -87,7 +79,8 @@ export default {
   }),
 
   computed: mapGetters({
-    user: 'authUser',
+    role: 'authRole',
+    detail: 'authDetail',
     authenticated: 'authCheck'
   }),
 

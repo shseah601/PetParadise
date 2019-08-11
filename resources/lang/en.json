@@ -38,5 +38,13 @@
   "clients": "Clients",
   "pets": "Pets",
   "services": "Services",
-  "reports": "Reports"
+  "reports": "Reports",
+  "dashboard": "DashBoard",
+  "calendar": "Calendar",
+  "bookings": "Bookings",
+  "booking": "Booking",
+  "app_name": "Pet Paradise",
+  "company": "Company",
+  "about_us": "About Us"
+
 }

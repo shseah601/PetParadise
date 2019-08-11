@@ -70,7 +70,7 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      user: 'authUser'
+      role: 'authRole'
     })
   },
 
@@ -93,10 +93,13 @@ export default {
       this.busy = false
 
       // Redirect home.
-      if (this.user.admin || this.user.client) {
+      if (this.role.name === 'admin' || this.role.name === 'employee') {
+        this.$store.dispatch('fetchClients')
+        this.$store.dispatch('fetchEmployees')
+        this.$store.dispatch('fetchCompany')
         this.$router.push({ name: 'admin.home' })
       } else {
-        this.$router.push({ name: 'home' })
+        this.$router.push({ name: 'client.home' })
       }
     }
   }

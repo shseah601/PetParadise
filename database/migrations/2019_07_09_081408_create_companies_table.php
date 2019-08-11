@@ -21,7 +21,7 @@ class CreateCompaniesTable extends Migration
             $table->string('address');
             $table->text('title');
             $table->text('description');
-            $table->text('image_path');
+            $table->text('logo');
             $table->timestampsTz();
         });
     }

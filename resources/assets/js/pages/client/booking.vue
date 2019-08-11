@@ -1,15 +1,15 @@
 <template>
   <v-container grid-list-md text-center>
     <v-layout wrap>
-      <v-flex md12>
+      <v-flex xs12 sm12 md12>
         <v-card>
           <v-card-text>
-            <p class="display-3">PetParadise</p>
+            <p class="display-3">{{ $t('app_name') }}</p>
             <v-divider></v-divider>
           </v-card-text>
         </v-card>
       </v-flex>
-      <v-flex md3>
+      <v-flex xs12 sm12 md3>
         <v-flex v-for="(item, i) in services" :key="i">
           <v-card class>
             <v-card-title class="headline" v-text="item.name"></v-card-title>
@@ -24,7 +24,7 @@
           </v-card>
         </v-flex>
       </v-flex>
-      <v-flex d-flex md9>
+      <v-flex d-flex xs12 sm12 md9>
         <v-card>
           <v-card-title align-center>
             <v-btn>&lt; Previous Week</v-btn>
@@ -75,7 +75,7 @@
 export default {
   name: 'booking-view',
   metaInfo () {
-    return { title: this.$t('home') }
+    return { title: this.$t('booking') }
   },
   data: () => ({
     services: [

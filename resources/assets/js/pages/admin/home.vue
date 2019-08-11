@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'home-view',
+  name: 'admin-home-view',
   metaInfo () {
     return { title: this.$t('home') }
   }
