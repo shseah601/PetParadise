@@ -3,23 +3,11 @@
     <v-flex xs12 sm8 offset-sm2 lg4 offset-lg4>
       <v-card>
         <progress-bar :show="form.busy"></progress-bar>
-        <form @submit.prevent="register" @keydown="form.onKeydown($event)">
+        <form @submit.prevent="reset" @keydown="form.onKeydown($event)">
           <v-card-title primary-title>
-            <h3 class="headline mb-0">{{ $t('register') }}</h3>
+            <h3 class="headline mb-0">{{ $t('reset_password') }}</h3>
           </v-card-title>
           <v-card-text>
-            <!-- Name -->
-            <text-input
-              :form="form"
-              :label="$t('name')"
-              :v-errors="errors"
-              :value.sync="form.name"
-              browser-autocomplete="name"
-              counter="30"
-              name="name"
-              v-validate="'required|max:30'"
-            ></text-input>
-
             <!-- Email -->
             <email-input
               :form="form"
@@ -36,9 +24,7 @@
               :hint="$t('password_length_hint')"
               :v-errors="errors"
               :value.sync="form.password"
-              browser-autocomplete="new-password"
               v-on:eye="eye = $event"
-              name="password"
               v-validate="'required|min:8'"
             ></password-input>
 
@@ -49,16 +35,14 @@
               :label="$t('confirm_password')"
               :v-errors="errors"
               :value.sync="form.password_confirmation"
-              browser-autocomplete="new-password"
               data-vv-as="password"
               hide-icon="true"
               name="password_confirmation"
               v-validate="'required|confirmed:password'"
             ></password-input>
           </v-card-text>
-
           <v-card-actions>
-            <submit-button :form="form" :label="$t('register')"></submit-button>
+            <submit-button :flat="true" :form="form" :label="$t('reset_password')"></submit-button>
           </v-card-actions>
         </form>
       </v-card>
@@ -68,41 +52,61 @@
 
 <script>
 import Form from 'vform'
+import { mapGetters } from 'vuex'
 
 export default {
-  name: 'register-view',
+  name: 'reset-view',
+
   metaInfo () {
-    return { title: this.$t('register') }
+    return { title: this.$t('reset_password') }
   },
 
   data: () => ({
     form: new Form({
-      name: '',
+      token: '',
       email: '',
       password: '',
       password_confirmation: ''
     }),
     eye: true
   }),
+  computed: {
+    ...mapGetters({
+      user: 'authUser'
+    })
+  },
 
   methods: {
-    async register () {
+    async reset () {
       if (await this.formHasErrors()) return
 
-      // Register the user.
-      const { data } = await this.form.post('/api/admin/register')
+      this.form.token = this.$route.params.token
 
-      // Log in the user.
-      const { data: { token } } = await this.form.post('/api/login')
+      const response = await this.form.post('/api/password/reset')
+
+      // Login user if reset successful.
+      const { data } = await this.form.post('/api/login')
 
       // Save the token.
-      this.$store.dispatch('saveToken', { token })
+      this.$store.dispatch('saveToken', {
+        token: data.token,
+        remember: false
+      })
 
-      // Update the user.
-      await this.$store.dispatch('updateUser', { user: data })
+      // Fetch the user.
+      await this.$store.dispatch('fetchUser')
+
+      this.$store.dispatch('responseMessage', {
+        type: 'success',
+        text: response.data.status
+      })
 
       // Redirect home.
-      this.$router.push({ name: 'admin.home' })
+      if (this.user.admin || this.user.client) {
+        this.$router.push({ name: 'admin.home' })
+      } else {
+        this.$router.push({ name: 'client.home' })
+      }
     }
   }
 }

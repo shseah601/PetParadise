@@ -35,5 +35,16 @@
   "account": "My account",
   "users": "Users",
   "employees": "Employees",
-  "clients": "Clients"
+  "clients": "Clients",
+  "pets": "Pets",
+  "services": "Services",
+  "reports": "Reports",
+  "dashboard": "DashBoard",
+  "calendar": "Calendar",
+  "bookings": "Bookings",
+  "booking": "Booking",
+  "app_name": "Pet Paradise",
+  "company": "Company",
+  "about_us": "About Us"
+
 }

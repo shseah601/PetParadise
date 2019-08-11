@@ -18,7 +18,7 @@ class BookingsTableDataSeeder extends Seeder
         'employee_id' => 2,
         'start_time' => '2019-07-28 15:00:00',
         'end_time' => '2019-07-28 16:00:00',
-        'status' => 'requested'
+        'status' => 'accepted'
       ]);
     }
 }

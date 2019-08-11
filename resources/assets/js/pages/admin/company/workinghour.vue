@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'company-workinghour-view',
+  name: 'admin-company-workinghour-view',
   metaInfo () {
     return { title: 'Clients' }
   }

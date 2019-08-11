@@ -61,10 +61,18 @@ class BookingController extends Controller
    */
   public function show($id)
   {
+
     try {
       $booking = Booking::with('client')->with('pet')->with('employee')->findOrFail($id);
-
-      return new BookingResource($booking);
+      
+      if (auth()->user()->can('view', $booking))
+      {
+        return new BookingResource($booking);
+      } else {
+        return response()->json([
+          'message' => "Not Authorized",
+        ], 401);
+      }
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

@@ -9,7 +9,7 @@ Vue.use(Meta)
 Vue.use(Router)
 
 const router = make(
-  routes({ authGuard, guestGuard })
+  routes({ employeeAuthGuard, authGuard, guestGuard })
 )
 
 sync(store, router)
@@ -84,8 +84,26 @@ function authGuard (routes) {
   return beforeEnter(routes, (to, from, next) => {
     if (!store.getters.authCheck) {
       next({
-        name: 'admin.login',
+        name: 'login',
         query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  })
+}
+
+/**
+ * Redirect to client home if it is not employee
+ *
+ * @param  {Array} routes
+ * @return {Array}
+ */
+function employeeAuthGuard (routes) {
+  return beforeEnter(routes, (to, from, next) => {
+    if (store.getters.authRole.name === 'client') {
+      next({
+        name: 'client.home'
       })
     } else {
       next()
@@ -102,7 +120,11 @@ function authGuard (routes) {
 function guestGuard (routes) {
   return beforeEnter(routes, (to, from, next) => {
     if (store.getters.authCheck) {
-      next({ name: 'admin.home' })
+      if (store.getters.authRole.name === 'admin' || store.getters.authRole.name === 'employee') {
+        next({ name: 'admin.home' })
+      } else {
+        next({ name: 'client.home' })
+      }
     } else {
       next()
     }

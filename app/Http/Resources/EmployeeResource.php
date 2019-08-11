@@ -22,7 +22,7 @@ class EmployeeResource extends JsonResource
           'gender' => $this->when(!is_null($this->gender), $this->gender),
           'birth_date' => $this->when(!is_null($this->birth_date), $this->birth_date),
           'phone' => $this->when(!is_null($this->phone), $this->phone),
-          'user_id' => $this->when(!is_null($this->user_id), $this->user_id),
+          'user' => new UserResource($this->whenLoaded('user')),
           'bookings' => BookingResource::collection($this->whenLoaded('bookings')),  
         ];
     }

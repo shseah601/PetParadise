@@ -116,9 +116,7 @@ class PetController extends Controller
     try {
       $pet = Pet::findOrFail($id);
 
-      DB::transaction(function () use ($pet) {
-        $pet->delete();
-      });
+      $pet->delete();
 
       return response()->json(null, 204);
     } catch (ModelNotFoundException $ex) {

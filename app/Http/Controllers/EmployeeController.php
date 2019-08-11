@@ -10,6 +10,7 @@ use App\Employee;
 use App\Http\Resources\EmployeeResource;
 use App\Http\Resources\EmployeeCollection;
 use App\User;
+use Bouncer;
 
 class EmployeeController extends Controller
 {
@@ -20,7 +21,7 @@ class EmployeeController extends Controller
    */
   public function index()
   {
-    $employees = Employee::get();
+    $employees = Employee::with('user')->get();
 
     return new EmployeeCollection($employees);
   }
@@ -36,7 +37,6 @@ class EmployeeController extends Controller
     try {
       $user = new User;
 
-      $user->name = $request1->name;
       $user->email = $request1->email;
       $user->password = bcrypt($request1->password);
 
@@ -47,6 +47,7 @@ class EmployeeController extends Controller
         $user->saveOrFail();
         $employee->user_id = $user->id;
         $employee->saveOrFail();
+        Bouncer::assign('employee')->to($user);
       });
 
       return response()->json([
@@ -98,7 +99,6 @@ class EmployeeController extends Controller
       $user = User::findOrFail($employee->user_id);
 
       $employee->fill($request->all());
-      $user->name = $request->name;
 
       DB::transaction(function () use ($user, $employee) {
         $user->saveOrFail();

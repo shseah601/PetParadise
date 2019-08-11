@@ -5,9 +5,12 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Bouncer;
 use App\User;
+use App\Booking;
+use App\Client;
+use App\Employee;
 
 class InitBouncer extends Command
-{
+{ 
     /**
      * The name and signature of the console command.
      *
@@ -55,28 +58,41 @@ class InitBouncer extends Command
         ]);
 
         //abilties
-        $manageUsers = Bouncer::ability()->create([
-            'name' => 'manage-users',
-            'title' => 'Manage Users'
+        $manageEmployees = Bouncer::ability()->create([
+          'name' => 'manage-employees',
+          'title' => 'Manage Employees'
         ]);
         $manageAdminPanel = Bouncer::ability()->create([
           'name' => 'manage-admin-panel',
           'title' => 'Manage Admin Panel'
         ]);
-        $makeBooking = Bouncer::ability()->create([
-          'name' => 'make-booking',
-          'title' => 'Make booking'
+        $manageCompany = Bouncer::ability()->create([
+          'name' => 'manage-company',
+          'title' => 'Manage Company'
         ]);
+        $manageBookings = Bouncer::ability()->create([
+          'name' => 'manage-bookings',
+          'title' => 'Manage Bookings'
+        ]);
+        $managePets = Bouncer::ability()->create([
+          'name' => 'manage-pets',
+          'title' => 'Manage Pets'
+        ]);
+        
 
         //assign abilities to roles
-        Bouncer::allow($admin)->to($manageUsers);
+        Bouncer::allow($admin)->to($manageEmployees);
         Bouncer::allow($admin)->to($manageAdminPanel);
-        Bouncer::allow($admin)->to($makeBooking);
+        Bouncer::allow($admin)->to($manageCompany);
+        Bouncer::allow($admin)->to($manageBookings);
+        Bouncer::allow($admin)->to($managePets);
 
-        Bouncer::allow($admin)->to($manageAdminPanel);
-        Bouncer::allow($admin)->to($makeBooking);
+        Bouncer::allow($employee)->to($manageAdminPanel);
+        Bouncer::allow($employee)->to($manageBookings);
+        Bouncer::allow($employee)->to($managePets);
 
-        Bouncer::allow($admin)->to($makeBooking);
+        Bouncer::allow($client)->to($manageBookings);
+        Bouncer::allow($client)->to($managePets);
 
         $user = User::where('email', 'shseah601@gmail.com')->first();
         Bouncer::assign($admin)->to($user);
@@ -88,6 +104,9 @@ class InitBouncer extends Command
         Bouncer::assign($employee)->to($user);
 
         $user = User::where('email', 'seelem@gmail.com')->first();
-        Bouncer::assign($admin)->to($user);
+        Bouncer::assign($client)->to($user);
+
+        $user = User::where('email', 'ruizhe@gmail.com')->first();
+        Bouncer::assign($client)->to($user);
     }
 }
