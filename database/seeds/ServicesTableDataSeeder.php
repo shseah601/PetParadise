@@ -28,7 +28,7 @@ class ServicesTableDataSeeder extends Seeder
           'price_min' => 50.00,
           'price_max' => 100.00,
           'description' => 'Pets that live in with us are pampered with luxurious private rooms, individual attention and exciting daily activities to keep them happy and healthy.',
-          'image' => '/img/services/pet-grooming.png',
+          'image' => '/img/services/pet-boarding.png',
           'capacity' => '10'
         ]);
     }
