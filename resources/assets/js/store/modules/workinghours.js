@@ -34,5 +34,5 @@ export const actions = {
 
 // getters
 export const getters = {
-  allWorkingHours: state => state.workinghours
+  workinghours: state => state.workinghours.data
 }
