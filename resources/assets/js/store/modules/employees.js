@@ -4,12 +4,13 @@ import * as types from '../mutation-types'
 // state
 export const state = {
   employee: null,
-  employees: []
+  employees: null
 }
 
 // mutations
 export const mutations = {
-  [types.CREATE_EMPLOYEE] (state, { employees }) {
+  [types.CREATE_EMPLOYEE] (state, { employee }) {
+    state.employees.data.push(employee)
   },
   [types.FETCH_EMPLOYEES] (state, { employees }) {
     state.employees = employees
@@ -17,17 +18,17 @@ export const mutations = {
   [types.FETCH_EMPLOYEE] (state, { employee }) {
     state.employee = employee
   },
-  [types.UPDATE_EMPLOYEE] (state, { employees }) {
-    // const index = state.clients.indexOf(item => item.id === client.id)
-    // state.clients = Object.assign([...state.clients], { [index]: client })
+  [types.UPDATE_EMPLOYEE] (state, { employee }) {
+    const index = state.employees.data.findIndex(item => item.id === employee.data.id)
+    state.employees.data = Object.assign([...state.employees.data], { [index]: employee.data })
   },
-  [types.DELETE_EMPLOYEE] (state, { employees }) {
-    // const index = state.clients.findIndex(item => item.id === client.id)
-    // state.clients.splice(index, 1)
+  [types.DELETE_EMPLOYEE] (state, { employee }) {
+    const index = state.employees.data.findIndex(item => item.id === employee.data.id)
+    state.employees.data.splice(index, 1)
   },
   [types.CLEAR_EMPLOYEES] (state) {
     state.employee = null
-    state.employees = []
+    state.employees = null
   }
 
 }
@@ -58,6 +59,6 @@ export const actions = {
 
 // getters
 export const getters = {
-  allEmployees: state => state.employees,
+  employees: state => state.employees.data,
   employee: state => state.employee
 }

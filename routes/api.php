@@ -32,13 +32,16 @@ Route::middleware(['auth:api'])->group(function () {
   Route::patch('settings/profile', 'Settings\UpdateProfile');
   Route::patch('settings/password', 'Settings\UpdatePassword');
 
-  Route::apiResource('company', 'CompanyController');
-  Route::apiResource('clients', 'ClientController')->except(['store']);
+  Route::apiResource('company', 'CompanyController')->except(['update']);
+  Route::post('company/{id}', 'CompanyController@update');
+  Route::apiResource('clients', 'ClientController');
   Route::apiResource('employees', 'EmployeeController');
-  Route::apiResource('pendingbookings', 'PendingBookingController');
+  Route::apiResource('pendingBookings', 'PendingBookingController');
   Route::apiResource('bookings', 'BookingController');
   Route::apiResource('pets', 'PetController');
-  Route::apiResource('workinghours', 'WorkingHourController');
+  Route::apiResource('services', 'ServiceController');
+  Route::apiResource('workinghours', 'WorkingHourController')->except(['update']);
+  Route::post('updateWorkingHours', 'WorkingHourController@updateWorkingHours');
 });
 
 //admin

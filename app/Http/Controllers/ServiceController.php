@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\ServiceRequest;
-
+use App\Http\Resources\ServiceCollection;
+use App\Http\Resources\ServiceResource;
 use App\Service;
 
 class ServiceController extends Controller
@@ -16,9 +17,9 @@ class ServiceController extends Controller
    */
   public function index()
   {
-    $services = Service::get();
+    $services = Service::with(['bookings', 'pendingBookings'])->get();
 
-    return $services;
+    return new ServiceCollection($services);
   }
 
   /**
@@ -58,9 +59,9 @@ class ServiceController extends Controller
   public function show($id)
   {
     try {
-      $service = Service::findOrFail($id);
+      $service = Service::with(['bookings', 'pendingBookings'])->findOrFail($id);
 
-      return $service;
+      return new ServiceResource($service);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -78,12 +79,12 @@ class ServiceController extends Controller
   public function update(ServiceRequest $request, $id)
   {
     try {
-      $service = Service::findOrFail($id);
+      $service = Service::with(['bookings', 'pendingBookings'])->findOrFail($id);
 
       $service->fill($request->all());
       $service->saveOrFail();
 
-      return response()->json(null, 204);
+      return new ServiceResource($service);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

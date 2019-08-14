@@ -43,9 +43,17 @@ class ClientController extends Controller
       Bouncer::assign('client')->to($user);
     });
 
+    // $clientResource = new ClientResource(Client::with('user')->findOrFail($user->id));
+
     return response()->json([
-      'id' => $client->id,
-      'user_id' => $client->user_id,
+      "id" => $client->id,
+      "name" => $client->name,
+      "address" => $client->address,
+      "phone" => $client->phone,
+      "user" => [
+        "id" => $user->id,
+        "email" => $user->email
+      ]
     ], 201);
   }
 
@@ -58,10 +66,9 @@ class ClientController extends Controller
   public function show($id)
   {
     try {
-      $client = Client::with('pets')->with('bookings')->findOrFail($id);
+      $client = Client::with(['pets', 'bookings', 'pendingBookings'])->findOrFail($id);
 
-      if (auth()->user()->can('view', $client))
-      {
+      if (auth()->user()->can('view', $client)) {
         return new ClientResource($client);
       } else {
         return response()->json([
@@ -85,7 +92,7 @@ class ClientController extends Controller
   public function update(ClientRequest $request, $id)
   {
     try {
-      $client = Client::findOrFail($id);
+      $client = Client::with('user')->findOrFail($id);
       $user = User::findOrFail($client->user_id);
 
       $client->fill($request->all());
@@ -95,7 +102,7 @@ class ClientController extends Controller
         $client->saveOrFail();
       });
 
-      return response()->json(null, 204);
+      return new ClientResource($client);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -120,14 +127,14 @@ class ClientController extends Controller
   public function destroy($id)
   {
     try {
-      $client = Client::findOrFail($id);
+      $client = Client::with('user')->findOrFail($id);
 
       DB::transaction(function () use ($client) {
         $client->delete();
         $client->user->delete();
       });
 
-      return response()->json(null, 204);
+      return new ClientResource($client);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

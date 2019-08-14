@@ -21,4 +21,14 @@ class Service extends Model
   ];
 
   protected $dates = ['deleted_at'];
+
+  public function pendingBookings()
+  {
+    return $this->hasMany(PendingBooking::class);
+  }
+
+  public function bookings()
+  {
+    return $this->hasMany(Booking::class);
+  }
 }

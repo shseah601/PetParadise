@@ -19,7 +19,7 @@ class CreateAdminsTable extends Migration
             $table->bigInteger('ic_no')->unique()->unsigned();
             $table->string('address');
             $table->string('gender');
-            $table->date('birth_date');
+            $table->date('dob');
             $table->string('phone');
             $table->integer('user_id')->unsigned();
             $table->timestampsTz();

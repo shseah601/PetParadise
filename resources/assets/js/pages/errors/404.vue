@@ -5,7 +5,7 @@
         <v-layout column align-center>
           <div class="display-3 grey--text mt-5">{{ $t('page_not_found') }}</div>
           <div class="body-2 my-3">
-            <router-link v-if="role && (role.name == 'admin' || role.name == 'employee')" :to="{ name: 'admin.home' }">
+            <router-link v-if="role && (role.name == 'admin' || role.name == 'employee')" :to="{ name: 'admin.dashboard' }">
               {{ $t('go_home') }}
             </router-link>
             <router-link v-else :to="{ name: 'client.home' }">

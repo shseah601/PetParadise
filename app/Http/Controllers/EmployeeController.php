@@ -52,8 +52,16 @@ class EmployeeController extends Controller
 
       return response()->json([
         'id' => $employee->id,
-        'user_id' => $employee->user_id,
-        'created_at' => $employee->created_at,
+        'name' => $employee->name,
+        'address' => $employee->address,
+        'phone' => $employee->phone,
+        'gender' => $employee->gender,
+        'ic_no' => $employee->ic_no,
+        'dob' => $employee->dob,
+        "user" => [
+          "id" => $user->id,
+          "email" => $user->email
+        ]
       ], 201);
     } catch (QueryException $ex) {
       return response()->json([
@@ -75,7 +83,7 @@ class EmployeeController extends Controller
   public function show($id)
   {
     try {
-      $employee = Employee::with('bookings')->findOrFail($id);
+      $employee = Employee::with(['bookings', 'pendingBookings'])->findOrFail($id);
 
       return new EmployeeResource($employee);
     } catch (ModelNotFoundException $ex) {
@@ -95,7 +103,7 @@ class EmployeeController extends Controller
   public function update(EmployeeRequest $request, $id)
   {
     try {
-      $employee = Employee::findOrFail($id);
+      $employee = Employee::with('user')->findOrFail($id);
       $user = User::findOrFail($employee->user_id);
 
       $employee->fill($request->all());
@@ -105,7 +113,7 @@ class EmployeeController extends Controller
         $employee->saveOrFail();
       });
 
-      return response()->json(null, 204);
+      return new EmployeeResource($employee);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -136,7 +144,7 @@ class EmployeeController extends Controller
         $employee->delete();
       });
 
-      return response()->json(null, 204);
+      return new EmployeeResource($employee);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

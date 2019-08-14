@@ -1,13 +1,20 @@
 export default ({ employeeAuthGuard, authGuard, guestGuard }) => [
-  { path: '/admin', redirect: { name: 'admin.home' } },
+  { path: '/admin', redirect: { name: 'admin.dashboard' } },
 
   // Authenticated routes for authenticated employees
   ...employeeAuthGuard([
-    { path: '/admin/home', name: 'admin.home', component: require('~/pages/admin/home.vue') },
     { path: '/admin/dashboard', name: 'admin.dashboard', component: require('~/pages/admin/dashboard.vue') },
     { path: '/admin/calendar', name: 'admin.calendar', component: require('~/pages/admin/calendar.vue') },
     { path: '/admin/services', name: 'admin.services', component: require('~/pages/admin/services.vue') },
-    { path: '/admin/reports', name: 'admin.reports', component: require('~/pages/admin/reports.vue') },
+    {
+      path: '/admin/reports',
+      component: require('~/pages/admin/reports/index.vue'),
+      children: [
+        { path: '', redirect: { name: 'admin.reports.bookings' } },
+        { path: 'bookings', name: 'admin.reports.bookings', component: require('~/pages/admin/reports/booking.vue') },
+        { path: 'pendingBookings', name: 'admin.reports.pendingBookings', component: require('~/pages/admin/reports/pending.vue') }
+      ]
+    },
     { path: '/admin/pets', name: 'admin.pets', component: require('~/pages/admin/pets.vue') },
     { path: '/admin/users/clients', name: 'admin.users.clients', component: require('~/pages/admin/users/clients.vue') },
     { path: '/admin/users/employees', name: 'admin.users.employees', component: require('~/pages/admin/users/employees.vue') },

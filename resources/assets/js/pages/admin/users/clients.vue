@@ -4,10 +4,12 @@
     <v-card-title class="grey lighten-4">
       <h3 class="headline mb-0">{{ $t('clients') }}</h3>
       <v-spacer></v-spacer>
+      <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+      <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="500px">
         <template v-slot:activator="{ on }">
           <v-btn color="primary" dark class="mb-2" v-on="on">
-            <v-icon left dark>add_circle</v-icon>New Item
+            <v-icon left dark>add_circle</v-icon>New
           </v-btn>
         </template>
         <v-card>
@@ -24,14 +26,14 @@
                       v-model="editedItem.name"
                       :counter="100"
                       :rules="rules.name"
-                      label="Client name"
+                      label="Client Name"
                       required
                     ></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm12 md12>
                     <v-text-field
                       v-model="editedItem.user.email"
-                      :readonly="editedIndex != -1"
+                      :disabled="editedIndex != -1"
                       :rules="(editedIndex != -1) ? [] : rules.email"
                       label="Email"
                       required
@@ -41,6 +43,8 @@
                     <v-text-field
                       v-model="editedItem.phone"
                       :rules="rules.phone"
+                      mask="01# - ########"
+                      maxlength="11"
                       label="Phone"
                       required
                     ></v-text-field>
@@ -66,7 +70,7 @@
       </v-dialog>
     </v-card-title>
     <v-card-text>
-      <v-data-table :headers="headers" :items="clients" class="elevation-1">
+      <v-data-table :headers="headers" :items="clients" :search="search" class="elevation-1">
         <template v-slot:items="props">
           <td>{{ props.item.name }}</td>
           <td class="text-xs-left">{{ props.item.user.email }}</td>
@@ -76,6 +80,13 @@
             <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
             <v-icon small @click="deleteItem(props.item)">delete</v-icon>
           </td>
+        </template>
+        <template v-slot:no-results>
+          <v-alert
+            :value="true"
+            color="error"
+            icon="warning"
+          >Your search for "{{ search }}" found no results.</v-alert>
         </template>
       </v-data-table>
     </v-card-text>
@@ -91,16 +102,16 @@ export default {
     return { title: this.$t('clients') }
   },
   data: () => ({
+    search: '',
     busy: false,
     dialog: false,
     headers: [
       { text: 'Name', align: 'left', value: 'name' },
-      { text: 'Email', value: 'email' },
+      { text: 'Email', value: 'user.email' },
       { text: 'Phone', value: 'phone' },
       { text: 'Address', value: 'address' },
       { text: 'Actions', value: 'name', sortable: false }
     ],
-    clients: null,
     editedIndex: -1,
     editedItem: {
       name: '',
@@ -126,11 +137,11 @@ export default {
       ],
       phone: [
         v => !!v || 'Phone is required',
-        v => /^(01)[0-46-9][0-9]{7,8}$/.test(v) || 'Name must be less than 100 characters'
+        v => /^(01)[0-46-9][0-9]{7,8}$/.test(v) || 'Phone must be valid'
       ],
       email: [
         v => !!v || 'E-mail is required',
-        v => /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/.test(v) || 'E-mail must be valid'
+        v => /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail must be valid'
       ],
       address: [
         v => !!v || 'Address is required'
@@ -140,10 +151,10 @@ export default {
 
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      return this.editedIndex === -1 ? 'New' : 'Edit'
     },
     ...mapGetters([
-      'allClients'
+      'clients'
     ])
   },
 
@@ -152,16 +163,8 @@ export default {
       val || this.close()
     }
   },
-
-  async created () {
-    this.initialize()
-  },
-
+  
   methods: {
-
-    initialize () {
-      this.clients = this.allClients.data
-    },
 
     editItem (item) {
       this.editedIndex = this.clients.indexOf(item)
@@ -169,13 +172,13 @@ export default {
       this.dialog = true
     },
 
-    async deleteItem (item) {
-      const index = this.clients.indexOf(item)
-      var r = confirm('Are you sure you want to delete this item?') && this.clients.splice(index, 1)
+    async deleteItem (client) {
+      var r = confirm('Are you sure you want to delete this item?')
       if (r) {
         this.busy = true
-        await this.$store.dispatch('deleteClient', item)
+        await this.$store.dispatch('deleteClient', client)
         this.busy = false
+        console.log('client deleted', client)
       } else {
 
       }
@@ -195,7 +198,6 @@ export default {
         this.busy = true
         await this.$store.dispatch('updateClient', this.editedItem)
         this.busy = false
-        Object.assign(this.clients[this.editedIndex], this.editedItem)
       } else {
         var newItem = Object.assign({}, this.editedItem)
         var otherDetail = {
@@ -207,7 +209,6 @@ export default {
         this.busy = true
         await this.$store.dispatch('createClient', newItem)
         this.busy = false
-        this.clients.push(this.editedItem)
       }
       this.close()
     }

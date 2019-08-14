@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Company;
+use League\Flysystem\Exception;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -62,9 +64,10 @@ class CompanyController extends Controller
       $company = Company::findOrFail($id);
 
       $company->fill($request->all());
+      $company->logo = '/img/company/logo.png';
       $company->saveOrFail();
 
-      return response()->json(null, 204);
+      return $company;
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

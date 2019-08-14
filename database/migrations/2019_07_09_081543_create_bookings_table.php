@@ -18,6 +18,7 @@ class CreateBookingsTable extends Migration
             $table->integer('client_id')->unsigned();
             $table->integer('pet_id')->unsigned();
             $table->integer('employee_id')->unsigned();
+            $table->integer('service_id')->unsigned();
             $table->datetime('start_time');
             $table->datetime('end_time');
             $table->string('status');
@@ -27,7 +28,7 @@ class CreateBookingsTable extends Migration
             $table->foreign('client_id')->references('id')->on('clients');
             $table->foreign('pet_id')->references('id')->on('pets');
             $table->foreign('employee_id')->references('id')->on('employees');
-
+            $table->foreign('service_id')->references('id')->on('services');
         });
     }
 

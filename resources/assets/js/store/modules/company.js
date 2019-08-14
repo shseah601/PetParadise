@@ -12,9 +12,8 @@ export const mutations = {
   [types.FETCH_COMPANY] (state, { company }) {
     state.company = company
   },
-  [types.UPDATE_COMPANY] (state, employees) {
-    // const index = state.clients.indexOf(item => item.id === client.id)
-    // state.clients = Object.assign([...state.clients], { [index]: client })
+  [types.UPDATE_COMPANY] (state, { company }) {
+    state.company = company
   },
   [types.CLEAR_COMPANY] (state) {
     state.company = null
@@ -29,8 +28,8 @@ export const actions = {
     commit(types.FETCH_COMPANY, { company: data })
   },
   async updateCompany ({ commit }, company) {
-    const { data } = await axios.put('/api/compan/' + 1, company)
-    commit(types.UPDATE_EMPLOYEE, { company: data })
+    const { data } = await axios.post('/api/company/' + 1, company)
+    commit(types.UPDATE_COMPANY, { company: data })
   }
 }
 

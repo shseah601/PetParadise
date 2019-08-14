@@ -61,7 +61,7 @@ export default {
       })
 
       if (this.user.admin || this.user.client) {
-        this.$router.push({ name: 'admin.home' })
+        this.$router.push({ name: 'admin.dashboard' })
       } else {
         this.$router.push({ name: 'publichome' })
       }

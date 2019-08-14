@@ -17,7 +17,7 @@ class PendingBookingController extends Controller
    */
   public function index()
   {
-    $pendingBookings = PendingBooking::with('client')->with('pet')->get();
+    $pendingBookings = PendingBooking::with(['client', 'pet', 'service'])->get();
 
     return new PendingBookingCollection($pendingBookings);
   }
@@ -28,19 +28,17 @@ class PendingBookingController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(BookingRequest $request)
+  public function store(PendingBookingRequest $request)
   {
     try {
-      $pendingBooking = new Booking;
+      $pendingBooking = new PendingBooking;
       $pendingBooking->fill($request->all());
       $pendingBooking->client_id = $request->client_id;
       $pendingBooking->pet_id = $request->pet_id;
       $pendingBooking->saveOrFail();
 
-      return response()->json([
-        'id' => $pendingBooking->id,
-        'created_at' => $pendingBooking->created_at,
-      ], 201);
+      return new PendingBookingResource($pendingBooking);
+
     } catch (QueryException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -62,7 +60,7 @@ class PendingBookingController extends Controller
   {
 
     try {
-      $pendingBooking = PendingBooking::with('client')->with('pet')->findOrFail($id);
+      $pendingBooking = PendingBooking::with(['client', 'pet', 'service'])->findOrFail($id);
 
       if (auth()->user()->can('view', $pendingBooking)) {
         return new PendingBookingResource($pendingBooking);
@@ -94,7 +92,7 @@ class PendingBookingController extends Controller
       $pendingBooking->fill($request->all());
       $pendingBooking->saveOrFail();
 
-      return response()->json(null, 204);
+      return new PendingBookingResource($pendingBooking);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -119,11 +117,11 @@ class PendingBookingController extends Controller
   public function destroy($id)
   {
     try {
-      $pendingBooking = PendingBooking::findOrFail($id);
+      $pendingBooking = PendingBooking::with(['client', 'pet', 'service'])->findOrFail($id);
 
       $pendingBooking->delete();
 
-      return response()->json(null, 204);
+      return new PendingBookingResource($pendingBooking);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

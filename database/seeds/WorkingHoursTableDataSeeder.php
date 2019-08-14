@@ -13,35 +13,46 @@ class WorkingHoursTableDataSeeder extends Seeder
     public function run()
     {
         WorkingHour::create([
-          'day' => 'Sunday'
-        ]);
-        WorkingHour::create([
-          'day' => 'Monday',
+          'name' => 'Sunday',
           'start_time' => '08:00:00',
-          'end_time' => '19:00:00'
+          'end_time' => '19:00:00',
+          'status'=> false
         ]);
         WorkingHour::create([
-          'day' => 'Tuesday',
+          'name' => 'Monday',
           'start_time' => '08:00:00',
-          'end_time' => '19:00:00'
+          'end_time' => '19:00:00',
+          'status' => true
         ]);
         WorkingHour::create([
-          'day' => 'Wednesday',
+          'name' => 'Tuesday',
           'start_time' => '08:00:00',
-          'end_time' => '19:00:00'
+          'end_time' => '19:00:00',
+          'status' => true
         ]);
         WorkingHour::create([
-          'day' => 'Thursday',
+          'name' => 'Wednesday',
           'start_time' => '08:00:00',
-          'end_time' => '19:00:00'
+          'end_time' => '19:00:00',
+          'status' => true
         ]);
         WorkingHour::create([
-          'day' => 'Friday',
+          'name' => 'Thursday',
           'start_time' => '08:00:00',
-          'end_time' => '19:00:00'
+          'end_time' => '19:00:00',
+          'status' => true
         ]);
         WorkingHour::create([
-          'day' => 'Saturday'
+          'name' => 'Friday',
+          'start_time' => '08:00:00',
+          'end_time' => '19:00:00',
+          'status' => true
+        ]);
+        WorkingHour::create([
+          'name' => 'Saturday',
+          'start_time' => '08:00:00',
+          'end_time' => '19:00:00',
+          'status' => false
         ]);
     }
 }

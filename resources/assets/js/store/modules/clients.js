@@ -10,6 +10,7 @@ export const state = {
 // mutations
 export const mutations = {
   [types.CREATE_CLIENT] (state, { client }) {
+    state.clients.data.push(client)
   },
   [types.FETCH_CLIENTS] (state, { clients }) {
     state.clients = clients
@@ -18,16 +19,16 @@ export const mutations = {
     state.client = client
   },
   [types.UPDATE_CLIENT] (state, { client }) {
-    // const index = state.clients.indexOf(item => item.id === client.id)
-    // state.clients = Object.assign([...state.clients], { [index]: client })
+    const index = state.clients.data.findIndex(item => item.id === client.data.id)
+    state.clients.data = Object.assign([...state.clients.data], { [index]: client.data })
   },
   [types.DELETE_CLIENT] (state, { client }) {
-    // const index = state.clients.findIndex(item => item.id === client.id)
-    // state.clients.splice(index, 1)
+    const index = state.clients.data.findIndex(item => item.id === client.data.id)
+    state.clients.data.splice(index, 1)
   },
   [types.CLEAR_CLIENTS] (state) {
     state.client = null
-    state.clients = []
+    state.clients = null
   }
 
 }
@@ -52,12 +53,12 @@ export const actions = {
   },
   async deleteClient ({ commit }, client) {
     const { data } = await axios.delete('/api/clients/' + client.id, client)
-    commit(types.UPDATE_CLIENT, { client: data })
+    commit(types.DELETE_CLIENT, { client: data })
   }
 }
 
 // getters
 export const getters = {
-  allClients: state => state.clients,
+  clients: state => state.clients.data,
   client: state => state.client
 }

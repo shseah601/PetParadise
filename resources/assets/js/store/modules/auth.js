@@ -78,6 +78,11 @@ export const actions = {
     commit(types.CLEAR_CLIENTS)
     commit(types.CLEAR_EMPLOYEES)
     commit(types.CLEAR_COMPANY)
+    commit(types.CLEAR_WORKINGHOURS)
+    commit(types.CLEAR_PETS)
+    commit(types.CLEAR_BOOKINGS)
+    commit(types.CLEAR_PENDING_BOOKINGS)
+    commit(types.CLEAR_SERVICES)
   }
 }
 

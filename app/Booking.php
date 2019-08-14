@@ -32,4 +32,9 @@ class Booking extends Model
       return $this->belongsTo(Employee::class);
     }
 
+    public function service()
+    {
+      return $this->belongsTo(Service::class);
+    }
+
 }

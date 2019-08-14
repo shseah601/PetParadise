@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\WorkingHour;
+use App\Http\Resources\WorkingHourCollection;
+use App\Http\Resources\WorkingHourResource;
 
 class WorkingHourController extends Controller
 {
@@ -16,29 +18,7 @@ class WorkingHourController extends Controller
   {
     $workinghours = WorkingHour::get();
 
-    return $workinghours;
-  }
-
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
-  public function store(Request $request)
-  {
-    //
-  }
-
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function show($id)
-  {
-    //
+    return new WorkingHourCollection($workinghours);
   }
 
   /**
@@ -48,15 +28,21 @@ class WorkingHourController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function updateWorkingHours(Request $request)
   {
     try {
-      $workinghour = WorkingHour::findOrFail($id);
-      $workinghour->start_time = $request->start_time;
-      $workinghour->end_time = $request->end_time;
-      $workinghour->saveOrFail();
+      $editedWorkinghours = $request->workinghours;
 
-      return response()->json(null, 204);
+      foreach ($editedWorkinghours as $editedWorkinghour) {
+        $workinghour = WorkingHour::findOrFail($editedWorkinghour['id']);
+        $workinghour->start_time = $editedWorkinghour['start_time'];
+        $workinghour->end_time = $editedWorkinghour['end_time'];
+        $workinghour->status = $editedWorkinghour['status'];
+        $workinghour->saveOrFail();
+      }
+      $workinghours = WorkingHour::get();
+      
+      return new WorkingHourCollection($workinghours);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -70,16 +56,5 @@ class WorkingHourController extends Controller
         'message' => $ex->getMessage(),
       ], 500);
     }
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function destroy($id)
-  {
-    //
   }
 }
