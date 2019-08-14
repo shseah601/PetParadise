@@ -116,7 +116,6 @@ export default {
       '23:00',
       '24:00'
     ],
-    workinghours: [],
     defaultWorkinghours: [
       {
         id: 1,
@@ -227,7 +226,7 @@ export default {
 
   computed: {
     ...mapGetters([
-      'allWorkingHours'
+      'workinghours'
     ])
   },
   async created () {
@@ -236,7 +235,6 @@ export default {
 
   methods: {
     initialize () {
-      this.workinghours = this.allWorkingHours.data
       this.defaultWorkinghours = JSON.parse(JSON.stringify(this.workinghours))
       this.editedWorkinghours = JSON.parse(JSON.stringify(this.defaultWorkinghours))
     },
@@ -266,13 +264,14 @@ export default {
       this.editedWorkinghours[index].end_time = `${event[1]}:00:00`
     },
     reset () {
-      this.editedWorkinghours = Object.assign({}, this.defaultWorkinghours)
+      this.editedWorkinghours = JSON.parse(JSON.stringify(this.defaultWorkinghours))
     },
     async update () {
       this.submit.workinghours = Object.assign({}, this.editedWorkinghours)
       console.log(this.submit)
       this.busy = true
       await this.$store.dispatch('updateWorkingHours', this.submit)
+      this.defaultWorkinghours = JSON.parse(JSON.stringify(this.editedWorkinghours))
       this.busy = false
     }
   }
