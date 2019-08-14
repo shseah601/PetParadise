@@ -28,7 +28,7 @@ class EmployeeRequest extends ApiFormRequest
           'ic_no' => 'required|integer|digits:12',
           'address' => 'required|string|max:190',
           'gender' => 'required|string|max:1',
-          'birth_date' => 'required|date_format:Y-m-d',
+          'dob' => 'required|date_format:Y-m-d',
           'phone' => ['required', new PhoneRule],
         ];
     }

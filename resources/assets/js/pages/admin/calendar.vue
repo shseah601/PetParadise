@@ -2,46 +2,232 @@
 <template>
   <v-card>
     <v-card-title class="grey lighten-4">
-      <h3 class="headline mb-0">{{ $t('calendar') }}</h3>
+      <v-flex xs9>
+        <h3 class="headline mb-0">{{ $t('calendar') }}</h3>
+      </v-flex>
+      <v-flex xs3>
+        <v-select v-model="type" :items="typeOptions" label="Type"></v-select>
+      </v-flex>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text>
-      <v-layout>
-        <v-flex>
-          <v-sheet height="500">
-            <v-calendar :now="today" :value="today" color="primary">
-              <template v-slot:day="{ date }">
+      <v-layout row wrap>
+        <v-flex xs12>
+          <div class="headline text-xs-center mb-2">{{ getMonthAndYear(selectedDate) }}</div>
+        </v-flex>
+        <v-flex xs12>
+          <v-sheet :height="type == 'month' ? '500' : '600' ">
+            <v-calendar
+              v-model="selectedDate"
+              :now="today"
+              :start="today"
+              :type="type"
+              ref="calendar"
+              color="primary"
+            >
+              <template v-if="type == 'month'" v-slot:day="{ date }">
                 <template v-for="event in eventsMap[date]">
-                  <v-menu :key="event.title" v-model="event.open" full-width offset-x>
+                  <v-menu :key="event.service.name" v-model="event.open" full-width offset-x>
                     <template v-slot:activator="{ on }">
                       <div
-                        v-if="!event.time"
                         v-ripple
                         class="my-event"
+                        v-on="on"
+                        v-html="event.service.name"
+                        :style="checkIfSmallerThanNow(event.end_time) ? 'background-color: #07ab4e;' : ''"
+                      ></div>
+                    </template>
+                    <v-card color="grey lighten-4" max-width="350px" flat>
+                      <v-toolbar
+                        class="white--text"
+                        :color="checkIfSmallerThanNow(event.end_time) ? '#07ab4e' : ''"
+                      >
+                        <v-toolbar-title v-html="event.service.name"></v-toolbar-title>
+                      </v-toolbar>
+                      <v-card-title primary-title>
+                        <v-layout row wrap>
+                          <v-flex xs6>
+                            <div class="font-weight-bold">Client Name:</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div>{{event.client.name}}</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div class="font-weight-bold">Pet Name:</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div>{{event.pet.name}}</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div class="font-weight-bold">Employee Name:</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div>{{event.employee.name}}</div>
+                          </v-flex>
+                          <template v-if="event.service.id == 1">
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Service Time:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{getTime(event.start_time)}}</div>
+                            </v-flex>
+                          </template>
+                          <template v-if="event.service.id == 2">
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Service Start Date:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{getDate(event.start_time)}}</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Service End Date:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{getDate(event.end_time)}}</div>
+                            </v-flex>
+                          </template>
+                        </v-layout>
+                      </v-card-title>
+                    </v-card>
+                  </v-menu>
+                </template>
+              </template>
+              <!-- the events at the top (all-day) -->
+              <template v-if="type == 'week'" v-slot:dayHeader="{ date }">
+                <template v-for="event in eventsMap[date]">
+                  <!-- all day events don't have time -->
+                  <v-menu :key="event.service.name" v-model="event.open" full-width offset-x>
+                    <template v-slot:activator="{ on }">
+                      <div
+                        v-if="event.service.id == 2"
+                        :key="event.service.name"
+                        class="my-event"
+                        v-on="on"
+                        v-html="event.service.name"
+                        :style="checkIfSmallerThanNow(event.end_time) ? 'background-color: #07ab4e;' : 'background-color: #07ab4e'"
+                      ></div>
+                    </template>
+                    <v-card color="grey lighten-4" max-width="350px" flat>
+                      <v-toolbar
+                        class="white--text"
+                        :color="checkIfSmallerThanNow(event.end_time) ? '#07ab4e' : ''"
+                      >
+                        <v-toolbar-title v-html="event.service.name"></v-toolbar-title>
+                      </v-toolbar>
+                      <v-card-title primary-title>
+                        <v-layout row wrap>
+                          <v-flex xs6>
+                            <div class="font-weight-bold">Client Name:</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div>{{event.client.name}}</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div class="font-weight-bold">Pet Name:</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div>{{event.pet.name}}</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div class="font-weight-bold">Employee Name:</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div>{{event.employee.name}}</div>
+                          </v-flex>
+                          <template v-if="event.service.id == 1">
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Service Time:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{getTime(event.start_time)}}</div>
+                            </v-flex>
+                          </template>
+                          <template v-if="event.service.id == 2">
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Service Start Date:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{getDate(event.start_time)}}</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Service End Date:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{getDate(event.end_time)}}</div>
+                            </v-flex>
+                          </template>
+                        </v-layout>
+                      </v-card-title>
+                    </v-card>
+                  </v-menu>
+                </template>
+              </template>
+              <!-- the events at the bottom (timed) -->
+              <template v-if="type == 'week'" v-slot:dayBody="{ date, timeToY, minutesToPixels }">
+                <template v-for="event in eventsMap[date]">
+                  <v-menu :key="event.service.name" v-model="event.open" full-width offset-x>
+                    <template v-slot:activator="{ on }">
+                      <!-- timed events -->
+                      <div
+                        v-if="event.time"
+                        :key="event.title"
+                        :style=" checkIfSmallerThanNow(event.end_time) ? `top: ${timeToY(getTime(event.start_time))}px; height: ${minutesToPixels(getMinutesBetweenDates(event.start_time, event.end_time))}px; background-color: #07ab4e;` : { top: timeToY(getTime(event.time)) + 'px', height: minutesToPixels(getMinutesBetweenDates(event.start_time, event.end_time)) + 'px'}"
+                        class="my-event with-time"
                         v-on="on"
                         v-html="event.title"
                       ></div>
                     </template>
-                    <v-card color="grey lighten-4" min-width="350px" flat>
-                      <v-toolbar color="primary" dark>
-                        <v-btn icon>
-                          <v-icon>edit</v-icon>
-                        </v-btn>
-                        <v-toolbar-title v-html="event.title"></v-toolbar-title>
-                        <v-spacer></v-spacer>
-                        <v-btn icon>
-                          <v-icon>favorite</v-icon>
-                        </v-btn>
-                        <v-btn icon>
-                          <v-icon>more_vert</v-icon>
-                        </v-btn>
+                    <v-card color="grey lighten-4" max-width="350px" flat>
+                      <v-toolbar
+                        class="white--text"
+                        :color="checkIfSmallerThanNow(event.end_time) ? '#07ab4e' : ''"
+                      >
+                        <v-toolbar-title v-html="event.service.name"></v-toolbar-title>
                       </v-toolbar>
                       <v-card-title primary-title>
-                        <span v-html="event.details"></span>
+                        <v-layout row wrap>
+                          <v-flex xs6>
+                            <div class="font-weight-bold">Client Name:</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div>{{event.client.name}}</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div class="font-weight-bold">Pet Name:</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div>{{event.pet.name}}</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div class="font-weight-bold">Employee Name:</div>
+                          </v-flex>
+                          <v-flex xs6>
+                            <div>{{event.employee.name}}</div>
+                          </v-flex>
+                          <template v-if="event.service.id == 1">
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Service Time:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{getTime(event.start_time)}}</div>
+                            </v-flex>
+                          </template>
+                          <template v-if="event.service.id == 2">
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Service Start Date:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{getDate(event.start_time)}}</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Service End Date:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{getDate(event.end_time)}}</div>
+                            </v-flex>
+                          </template>
+                        </v-layout>
                       </v-card-title>
-                      <v-card-actions>
-                        <v-btn flat color="secondary">Cancel</v-btn>
-                      </v-card-actions>
                     </v-card>
                   </v-menu>
                 </template>
@@ -51,70 +237,75 @@
         </v-flex>
       </v-layout>
     </v-card-text>
+    <v-card-actions>
+      <v-btn color="primary" @click="$refs.calendar.prev()">
+        <v-icon dark left>keyboard_arrow_left</v-icon>Prev
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn class="white--text" color="teal" @click="selectedDate = today">Today</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" @click="$refs.calendar.next()">
+        Next
+        <v-icon right dark>keyboard_arrow_right</v-icon>
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'admin-calendar-view',
   data: () => ({
-    today: '2019-01-08',
+    type: 'month',
+    today: new Date().toISOString().substr(0, 10),
+    selectedDate: new Date().toISOString().substr(0, 10),
+    typeOptions: [
+      { text: 'Week', value: 'week' },
+      { text: 'Month', value: 'month' }
+    ],
     events: [
       {
-        title: 'Vacation',
-        details: 'Going to the beach!',
-        date: '2018-12-30',
-        open: false
+        title: 'Weekly Meeting',
+        date: '2019-08-07',
+        time: '09:00',
+        duration: 45
       },
       {
-        title: 'Vacation',
-        details: 'Going to the beach!',
-        date: '2018-12-31',
-        open: false
+        title: 'Thomas\' Birthday',
+        date: '2019-08-10'
       },
       {
-        title: 'Vacation',
-        details: 'Going to the beach!',
-        date: '2019-01-01',
-        open: false
-      },
-      {
-        title: 'Meeting',
-        details: 'Spending time on how we do not have enough time',
-        date: '2019-01-07',
-        open: false
-      },
-      {
-        title: '30th Birthday',
-        details: 'Celebrate responsibly',
-        date: '2019-01-03',
-        open: false
-      },
-      {
-        title: 'New Year',
-        details: 'Eat chocolate until you pass out',
-        date: '2019-01-01',
-        open: false
-      },
-      {
-        title: 'Conference',
-        details: 'Mute myself the whole time and wonder why I am on this call',
-        date: '2019-01-21',
-        open: false
-      },
-      {
-        title: 'Hackathon',
-        details: 'Code like there is no tommorrow',
-        date: '2019-02-01',
-        open: false
+        title: 'Mash Potatoes',
+        date: '2019-08-09',
+        time: '12:30',
+        duration: 180
       }
+    ],
+    monthName: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
     ]
   }),
   computed: {
+    ...mapGetters([
+      'bookings'
+    ]),
     // convert the list of events into a map of lists keyed by date
     eventsMap () {
       const map = {}
-      this.events.forEach(e => (map[e.date] = map[e.date] || []).push(e))
+      this.bookings.forEach(e => (map[this.getDate(e.start_time)] = map[this.getDate(e.start_time)] || []).push(e))
       return map
     }
   },
@@ -122,8 +313,38 @@ export default {
     open (event) {
       alert(event.title)
     },
-    log: function (e) {
-      console.log(e)
+    getMonthAndYear (date) {
+      const d = new Date(date)
+      const year = d.getFullYear()
+      const month = this.monthName[d.getMonth()]
+
+      return `${month} ${year}`
+    },
+    getDate (date) {
+      date = new Date(date)
+      date = date.toISOString().substr(0, 10)
+      return date
+    },
+    getTime (date) {
+      const d = new Date(date).toTimeString()
+      const [hour, min, sec] = d.split(':')
+      sec
+      return `${hour}:${min}:00`
+    },
+    checkIfSmallerThanNow (date) {
+      const now = new Date()
+      const diff = now - new Date(date)
+
+      if (Math.sign(diff) === -1) {
+        return false
+      } else {
+        return true
+      }
+    },
+    getMinutesBetweenDates (startDate, endDate) {
+      const diff = Math.abs(new Date(endDate) - new Date(startDate))
+      const minutes = Math.floor((diff / 1000) / 60)
+      return minutes
     }
   },
   metaInfo () {
@@ -146,5 +367,10 @@ export default {
   padding: 3px;
   cursor: pointer;
   margin-bottom: 1px;
+
+  &.with-time {
+    position: absolute;
+    margin-right: 0px;
+  }
 }
 </style>

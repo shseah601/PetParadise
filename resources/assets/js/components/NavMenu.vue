@@ -11,12 +11,6 @@
     <v-divider></v-divider>
     <v-list>
       <template v-if="role.name == 'admin' || role.name == 'employee'">
-        <v-list-tile :to="{ name: 'admin.home' }">
-          <v-list-tile-action>
-            <v-icon>home</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title>Home</v-list-tile-title>
-        </v-list-tile>
         <v-list-tile v-for="(item, i) in adminItems" :key="i" :to="item.route">
           <v-list-tile-action>
             <v-icon light v-html="item.icon"></v-icon>
@@ -112,7 +106,7 @@ export default {
         {
           title: 'Reports',
           icon: 'assessment',
-          route: { name: 'admin.reports' }
+          route: { name: 'admin.reports.bookings' }
         },
         {
           title: 'Pets',

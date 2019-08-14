@@ -121,7 +121,7 @@ function guestGuard (routes) {
   return beforeEnter(routes, (to, from, next) => {
     if (store.getters.authCheck) {
       if (store.getters.authRole.name === 'admin' || store.getters.authRole.name === 'employee') {
-        next({ name: 'admin.home' })
+        next({ name: 'admin.dashboard' })
       } else {
         next({ name: 'client.home' })
       }

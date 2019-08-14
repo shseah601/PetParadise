@@ -22,6 +22,7 @@ class BookingResource extends JsonResource
           'client' => new ClientResource($this->whenLoaded('client')),
           'pet' => new PetResource($this->whenLoaded('pet')),
           'employee' => new EmployeeResource($this->whenLoaded('employee')),
+          'service' => new ServiceResource($this->whenLoaded('service')),
         ];
     }
 }

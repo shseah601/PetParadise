@@ -4,7 +4,7 @@
     <v-toolbar-title>
       <router-link
         v-if="role && (role.name == 'admin' || role.name == 'employee')"
-        :to="{ name: 'admin.home' }"
+        :to="{ name: 'admin.dashboard' }"
         class="white--text"
       >{{ appName }}</router-link>
       <router-link v-else :to="{ name: 'client.home' }" class="white--text">{{ appName }}</router-link>
@@ -74,6 +74,12 @@ export default {
         href: '#',
         title: i18n.t('logout'),
         action: 'logout'
+      },
+      {
+        icon: 'refresh',
+        href: '#',
+        title: 'Refresh Data',
+        action: 'refresh'
       }
     ]
   }),
@@ -102,6 +108,16 @@ export default {
       // Redirect to login.
       this.$router.push({ name: 'login' })
     },
+    refresh () {
+      this.$store.dispatch('fetchClients')
+      this.$store.dispatch('fetchEmployees')
+      this.$store.dispatch('fetchCompany')
+      this.$store.dispatch('fetchWorkingHours')
+      this.$store.dispatch('fetchPets')
+      this.$store.dispatch('fetchBookings')
+      this.$store.dispatch('fetchPendingBookings')
+      this.$store.dispatch('fetchServices')
+    },
     accountMenuItemClicked (action) {
       switch (action) {
         case 'profile':
@@ -109,6 +125,9 @@ export default {
           break
         case 'logout':
           this.logout()
+          break
+        case 'refresh':
+          this.refresh()
           break
       }
     }

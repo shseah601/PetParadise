@@ -100,6 +100,11 @@ export default {
         time: 'Closed'
       }
     ]
-  })
+  }),
+  methods: {
+    ...mapGetters([
+      'company'
+    ])
+  }
 }
 </script>

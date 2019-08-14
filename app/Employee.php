@@ -14,7 +14,7 @@ class Employee extends Model
         'ic_no',
         'address',
         'gender',
-        'birth_date',
+        'dob',
         'phone'
     ];
 

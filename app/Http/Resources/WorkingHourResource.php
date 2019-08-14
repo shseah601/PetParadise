@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PendingBookingResource extends JsonResource
+class WorkingHourResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,12 +16,10 @@ class PendingBookingResource extends JsonResource
     {
       return [
         'id' => $this->when(!is_null($this->id), $this->id),
+        'name' => $this->when(!is_null($this->name), $this->name),
         'start_time' => $this->when(!is_null($this->start_time), $this->start_time),
         'end_time' => $this->when(!is_null($this->end_time), $this->end_time),
-        'status' => $this->when(!is_null($this->status), $this->status),
-        'client' => new ClientResource($this->whenLoaded('client')),
-        'pet' => new PetResource($this->whenLoaded('pet')),
-        'service' => new ServiceResource($this->whenLoaded('service'))
+        'status' => $this->when(!is_null($this->status), $this->status)
       ];
     }
 }

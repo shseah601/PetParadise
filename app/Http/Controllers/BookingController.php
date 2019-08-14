@@ -17,7 +17,7 @@ class BookingController extends Controller
    */
   public function index()
   {
-    $bookings = Booking::with('client')->with('pet')->with('employee')->get();
+    $bookings = Booking::with(['client', 'pet', 'employee', 'service'])->get();
 
     return new BookingCollection($bookings);
   }
@@ -38,10 +38,7 @@ class BookingController extends Controller
       $booking->employee_id = $request->employee_id;
       $booking->saveOrFail();
 
-      return response()->json([
-        'id' => $booking->id,
-        'created_at' => $booking->created_at,
-      ], 201);
+      return new BookingResource($booking);
     } catch (QueryException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -96,7 +93,7 @@ class BookingController extends Controller
       $booking->fill($request->all());
       $booking->saveOrFail();
 
-      return response()->json(null, 204);
+      return new BookingResource($booking);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

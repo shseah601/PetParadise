@@ -17,7 +17,7 @@ class AdminsTableDataSeeder extends Seeder
             'ic_no' => '980601086003',
             'address' => '31A, Jalan SL 7/3, Bandar Sungai Long, 43200 Kajang, Selangor.',
             'gender' => 'M',
-            'birth_date' => '1998-06-01',
+            'dob' => '1998-06-01',
             'phone' => '0125207788',
             'user_id' => 1
         ]);

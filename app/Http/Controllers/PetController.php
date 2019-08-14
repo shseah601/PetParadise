@@ -64,7 +64,7 @@ class PetController extends Controller
   public function show($id)
   {
     try {
-      $pet = Pet::with('client')->with('bookings')->findOrFail($id);
+      $pet = Pet::with(['client', 'bookings', 'pendingBookings'])->findOrFail($id);
 
       return new PetResource($pet);
     } catch (ModelNotFoundException $ex) {
@@ -89,7 +89,7 @@ class PetController extends Controller
       $pet->fill($request->all());
       $pet->saveOrFail();
 
-      return response()->json(null, 204);
+      return new PetResource($pet);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -118,7 +118,7 @@ class PetController extends Controller
 
       $pet->delete();
 
-      return response()->json(null, 204);
+      return new PetResource($pet);
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

@@ -24,6 +24,8 @@ class CreateServicesTable extends Migration
             $table->string('duration')->nullable();
             $table->string('capacity')->nullable();
             $table->timestampsTz();
+            $table->softDeletesTz();
+
         });
     }
 

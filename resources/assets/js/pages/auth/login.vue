@@ -97,7 +97,12 @@ export default {
         this.$store.dispatch('fetchClients')
         this.$store.dispatch('fetchEmployees')
         this.$store.dispatch('fetchCompany')
-        this.$router.push({ name: 'admin.home' })
+        this.$store.dispatch('fetchWorkingHours')
+        this.$store.dispatch('fetchPets')
+        this.$store.dispatch('fetchBookings')
+        this.$store.dispatch('fetchPendingBookings')
+        this.$store.dispatch('fetchServices')
+        this.$router.push({ name: 'admin.dashboard' })
       } else {
         this.$router.push({ name: 'client.home' })
       }

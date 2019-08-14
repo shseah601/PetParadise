@@ -45,6 +45,8 @@
   "booking": "Booking",
   "app_name": "Pet Paradise",
   "company": "Company",
-  "about_us": "About Us"
+  "about_us": "About Us",
+  "working_hours": "Working Hours",
+  "pending_bookings": "Pending Bookings"
 
 }

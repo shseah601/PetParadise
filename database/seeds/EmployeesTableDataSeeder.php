@@ -17,7 +17,7 @@ class EmployeesTableDataSeeder extends Seeder
           'ic_no' => '930622024563',
           'address' => '22, Taman CC, 43000 KLCC, Kuala Lumpur.',
           'gender' => 'M',
-          'birth_date' => '1993-06-22',
+          'dob' => '1993-06-22',
           'phone' => '0165485487',
           'user_id' => 3
         ]);
@@ -26,7 +26,7 @@ class EmployeesTableDataSeeder extends Seeder
           'ic_no' => '960125056527',
           'address' => '22, Taman CC, 43000 KLCC, Kuala Lumpur.',
           'gender' => 'M',
-          'birth_date' => '1996-01-25',
+          'dob' => '1996-01-25',
           'phone' => '0135685245',
           'user_id' => 4
         ]);

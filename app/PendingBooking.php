@@ -22,4 +22,9 @@ class PendingBooking extends Model
     return $this->belongsTo(Pet::class);
   }
   
+  public function service()
+  {
+    return $this->belongsTo(Service::class);
+  }
+  
 }
