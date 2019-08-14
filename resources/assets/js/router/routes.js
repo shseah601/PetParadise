@@ -26,8 +26,8 @@ export default ({ employeeAuthGuard, authGuard, guestGuard }) => [
   // Authenticated routes for authenticated users
   ...authGuard([
     { path: '/home', name: 'client.home', component: require('~/pages/client/home.vue') },
-    { path: '/services', name: 'client.services', component: require('~/pages/client/services.vue') },
-    { path: '/booking', name: 'client.booking', component: require('~/pages/client/booking.vue') },
+    // { path: '/services', name: 'client.services', component: require('~/pages/client/services.vue') },
+    { path: '/book', name: 'client.book', component: require('~/pages/client/book.vue') },
     { path: '/bookings', name: 'client.bookings', component: require('~/pages/client/bookings.vue') },
     { path: '/pets', name: 'client.pets', component: require('~/pages/client/pets.vue') },
     {

@@ -1,110 +1,121 @@
 <template>
   <v-container grid-list-md text-center>
-    <v-layout wrap>
-      <v-flex md12>
+    <v-layout row wrap>
+      <v-flex xs12>
         <v-card>
+          <v-card-title primary-title>
+            <div class="display-3">{{ $t('app_name') }}</div>
+          </v-card-title>
           <v-card-text>
-            <p class="display-3">{{ $t('app_name') }}</p>
-            <v-divider></v-divider>
+            <v-img
+            src="/img/home1.jpg"
+            contain
+            >
+            </v-img>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn large color="primary">Book Now</v-btn>
+            <v-btn large color="primary" :to="{ name: 'client.book' }">Book Now</v-btn>
             <v-spacer></v-spacer>
           </v-card-actions>
         </v-card>
       </v-flex>
-      <v-flex d-flex md3>
-        <v-card class>
-          <v-card-title class="headline">
-            <strong>Operating Hours</strong>
-          </v-card-title>
-          <v-card-text>
-            <v-data-table :items="times" class="elevation-1" hide-actions hide-headers>
-              <template v-slot:items="props">
-                <td class="text-xs-right">{{ props.item.day }}</td>
-                <td class="text-xs-right">{{ props.item.time }}</td>
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-      <v-flex d-flex md6>
-        <v-card class>
-          <v-card-text>
-            <p>
-              <strong>Pet Care Centre, We Are Dedicated To Provide The Highest Quality Of Services For Your Pet.</strong>
-            </p>
-            <p>
-              Your pets will get the best care and most comfortable from us.
-              Experience our Pet Care Centre service and beautiful facilities that we hope can become your pet's home away from home.
-            </p>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-      <v-flex d-flex md3>
-        <v-card class>
-          <v-card-title class="headline">
-            <strong>Contact Us</strong>
-          </v-card-title>
-          <v-card-text>
-            <p>
-            <v-icon>call</v-icon>
-            012 - 3456789
-            </p>
-            <p>
-            <v-icon>email</v-icon>
-            petparadise@petparadise.com
-            </p>
-          </v-card-text>
-        </v-card>
+      <v-flex xs12>
+        <v-layout wrap>
+          <v-flex d-flex xs12 sm4 md4>
+            <v-card class>
+              <v-card-title class="headline">
+                <strong>Operating Hours</strong>
+              </v-card-title>
+              <v-card-text>
+                <v-data-table :items="workinghours" class="elevation-1" hide-actions hide-headers>
+                  <template v-slot:items="props">
+                    <td>{{ props.item.name }}</td>
+                    <td
+                      class="text-xs-right"
+                    >{{ getTimeRange(props.item.start_time, props.item.end_time) }}</td>
+                  </template>
+                </v-data-table>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+          <v-flex d-flex xs12 sm4 md4>
+            <v-card class>
+              <v-card-text>
+                <v-layout row wrap>
+                  <v-flex xs12>
+                    <strong>{{companyDetail.title}}</strong>
+                  </v-flex>
+                  <v-flex xs12>
+                    <div>{{companyDetail.description}}</div>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+          <v-flex d-flex xs12 sm4 md4>
+            <v-card class>
+              <v-card-title class="headline">
+                <strong>Contact Us</strong>
+              </v-card-title>
+              <v-card-text>
+                <v-flex xs12>
+                  <v-layout>
+                    <v-flex xs2>
+                      <v-icon>call</v-icon>
+                    </v-flex>
+                    <v-flex xs10>
+                      <div>012 - 3456789</div>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+                <v-flex xs12>
+                  <v-layout>
+                    <v-flex xs2>
+                      <v-icon>email</v-icon>
+                    </v-flex>
+                    <v-flex xs10>
+                      <div>petparadise@petparadise.com</div>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'home-view',
   metaInfo () {
     return { title: this.$t('home') }
   },
   data: () => ({
-    times: [
-      {
-        day: 'Sun',
-        time: 'Closed'
-      },
-      {
-        day: 'Mon',
-        time: '10:00 - 18:00'
-      },
-      {
-        day: 'Tue',
-        time: '10:00 - 18:00'
-      },
-      {
-        day: 'Wed',
-        time: '10:00 - 18:00'
-      },
-      {
-        day: 'Thu',
-        time: '10:00 - 18:00'
-      },
-      {
-        day: 'Fri',
-        time: '10:00 - 20:00'
-      },
-      {
-        day: 'Sat',
-        time: 'Closed'
-      }
-    ]
+
   }),
-  methods: {
+  computed: {
     ...mapGetters([
-      'company'
+      'companyDetail',
+      'workinghours'
     ])
+  },
+  methods: {
+    getTimeRange (startTime, endTime) {
+      const [hour1, min1, sec1] = startTime.split(':')
+      sec1
+      const start = `${hour1}:${min1}`
+      const [hour2, min2, sec2] = endTime.split(':')
+      sec2
+      const end = `${hour2}:${min2}`
+
+      return `${start} - ${end}`
+    }
   }
 }
 </script>

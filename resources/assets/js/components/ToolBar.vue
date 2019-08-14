@@ -109,14 +109,20 @@ export default {
       this.$router.push({ name: 'login' })
     },
     refresh () {
-      this.$store.dispatch('fetchClients')
-      this.$store.dispatch('fetchEmployees')
-      this.$store.dispatch('fetchCompany')
-      this.$store.dispatch('fetchWorkingHours')
-      this.$store.dispatch('fetchPets')
-      this.$store.dispatch('fetchBookings')
-      this.$store.dispatch('fetchPendingBookings')
-      this.$store.dispatch('fetchServices')
+      if (this.role.name === 'admin' || this.role.name === 'employee') {
+        this.$store.dispatch('fetchClients')
+        this.$store.dispatch('fetchEmployees')
+        this.$store.dispatch('fetchCompany')
+        this.$store.dispatch('fetchWorkingHours')
+        this.$store.dispatch('fetchPets')
+        this.$store.dispatch('fetchBookings')
+        this.$store.dispatch('fetchPendingBookings')
+        this.$store.dispatch('fetchServices')
+      } else {
+        this.$store.dispatch('fetchCompany')
+        this.$store.dispatch('fetchWorkingHours')
+        this.$store.dispatch('fetchServices')
+      }
     },
     accountMenuItemClicked (action) {
       switch (action) {
