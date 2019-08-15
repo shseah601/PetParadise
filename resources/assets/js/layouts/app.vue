@@ -1,7 +1,7 @@
 <template>
   <v-app light>
     <v-navigation-drawer 
-      v-if="authenticated" 
+      v-if="authenticated && loaded" 
       persistent 
       v-model="drawer" 
       enable-resize-watcher 
@@ -39,12 +39,13 @@ export default {
   },
 
   computed: mapGetters({
-    authenticated: 'authCheck'
+    authenticated: 'authCheck',
+    loaded: 'authLoaded'
   }),
 
   data () {
     return {
-      drawer: true
+      drawer: false
     }
   }
 }

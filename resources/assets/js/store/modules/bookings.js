@@ -10,7 +10,7 @@ export const state = {
 // mutations
 export const mutations = {
   [types.CREATE_BOOKING] (state, { booking }) {
-    state.bookings.data.push(booking)
+    state.bookings.data.push(booking.data)
   },
   [types.FETCH_BOOKINGS] (state, { bookings }) {
     state.bookings = bookings
@@ -23,13 +23,16 @@ export const mutations = {
     state.bookings.data = Object.assign([...state.bookings.data], { [index]: booking.data })
   },
   [types.UPDATE_BOOKING_MENU] (state, { booking }) {
-    
+
   },
   [types.CLEAR_BOOKINGS] (state) {
     state.booking = null
     state.bookings = null
     state.groomingBookings = null
     state.boardingBookings = null
+  },
+  [types.FETCH_CLIENT_BOOKINGS] (state, { bookings }) {
+    state.bookings = bookings
   }
 
 }
@@ -51,6 +54,10 @@ export const actions = {
   async updateBooking ({ commit }, booking) {
     const { data } = await axios.put('/api/bookings/' + booking.id, booking)
     commit(types.UPDATE_BOOKING, { booking: data })
+  },
+  async fetchClientBookings ({ commit }, clientId) {
+    const { data } = await axios.get('/api/clientBookings/' + clientId)
+    commit(types.FETCH_CLIENT_BOOKINGS, { bookings: data })
   }
 }
 

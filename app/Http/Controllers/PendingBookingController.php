@@ -22,6 +22,13 @@ class PendingBookingController extends Controller
     return new PendingBookingCollection($pendingBookings);
   }
 
+  public function getClientPendingBookings($id)
+  {
+    $pendingBookings = PendingBooking::with(['pet', 'service'])->where('client_id', $id)->get();
+
+    return new PendingBookingCollection($pendingBookings);
+  }
+
   /**
    * Store a newly created resource in storage.
    *
@@ -35,7 +42,10 @@ class PendingBookingController extends Controller
       $pendingBooking->fill($request->all());
       $pendingBooking->client_id = $request->client_id;
       $pendingBooking->pet_id = $request->pet_id;
+      $pendingBooking->service_id = $request->service_id;
       $pendingBooking->saveOrFail();
+      
+      $pendingBooking = PendingBooking::with(['client','pet','service'])->find($pendingBooking->id);
 
       return new PendingBookingResource($pendingBooking);
 
@@ -84,15 +94,22 @@ class PendingBookingController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(PendingBookingRequest $request, $id)
+  public function update(Request $request, $id)
   {
     try {
-      $pendingBooking = PendingBooking::findOrFail($id);
 
-      $pendingBooking->fill($request->all());
-      $pendingBooking->saveOrFail();
+      $pendingBooking = PendingBooking::with(['client', 'pet', 'service'])->findOrFail($id);
 
-      return new PendingBookingResource($pendingBooking);
+      if (auth()->user()->can('update', $pendingBooking)) {
+        $pendingBooking->fill($request->all());
+        $pendingBooking->saveOrFail();
+  
+        return new PendingBookingResource($pendingBooking);
+      } else {
+        return response()->json([
+          'message' => "Not Authorized",
+        ], 401);
+      }
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -119,9 +136,15 @@ class PendingBookingController extends Controller
     try {
       $pendingBooking = PendingBooking::with(['client', 'pet', 'service'])->findOrFail($id);
 
-      $pendingBooking->delete();
+      if (auth()->user()->can('delete', $pendingBooking)) {
+        $pendingBooking->delete();
 
-      return new PendingBookingResource($pendingBooking);
+        return new PendingBookingResource($pendingBooking);
+      } else {
+        return response()->json([
+          'message' => "Not Authorized",
+        ], 401);
+      }
     } catch (ModelNotFoundException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

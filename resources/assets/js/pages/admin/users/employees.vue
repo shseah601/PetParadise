@@ -262,6 +262,10 @@ export default {
         this.busy = true
         await this.$store.dispatch('deleteEmployee', item)
         this.busy = false
+        this.$store.dispatch('responseMessage', {
+          type: 'success',
+          text: 'Successfully Deleted Employee'
+        })
       } else {
 
       }
@@ -281,6 +285,10 @@ export default {
         this.busy = true
         await this.$store.dispatch('updateEmployee', this.editedItem)
         this.busy = false
+        this.$store.dispatch('responseMessage', {
+          type: 'success',
+          text: 'Successfully Edit Employee'
+        })
       } else {
         var newItem = Object.assign({}, this.editedItem)
         var otherDetail = {
@@ -292,6 +300,10 @@ export default {
         this.busy = true
         await this.$store.dispatch('createEmployee', newItem)
         this.busy = false
+        this.$store.dispatch('responseMessage', {
+          type: 'success',
+          text: 'Successfully Add New Employee'
+        })
       }
       this.close()
     }

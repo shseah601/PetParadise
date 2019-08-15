@@ -22,6 +22,7 @@ class ClientResource extends JsonResource
         'user' => new UserResource($this->whenLoaded('user')),
         'pets' => PetResource::collection($this->whenLoaded('pets')),
         'bookings' => BookingResource::collection($this->whenLoaded('bookings')),
+        'pendingBookings' => PendingBookingResource::collection($this->whenLoaded('pendingBookings')),
       ];
     }
 }

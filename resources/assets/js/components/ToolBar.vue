@@ -12,7 +12,7 @@
     <v-spacer></v-spacer>
 
     <!-- Authenticated -->
-    <template v-if="authenticated">
+    <template v-if="authenticated && loaded">
       <v-menu origin="center center" offset-y :nudge-bottom="10" transition="scale-transition">
         <v-btn flat slot="activator">
           <v-icon left>person</v-icon>
@@ -87,7 +87,9 @@ export default {
   computed: mapGetters({
     role: 'authRole',
     detail: 'authDetail',
-    authenticated: 'authCheck'
+    authenticated: 'authCheck',
+    loaded: 'authLoaded',
+    user: 'authUser'
   }),
 
   methods: {
@@ -108,20 +110,23 @@ export default {
       // Redirect to login.
       this.$router.push({ name: 'login' })
     },
-    refresh () {
+    async refresh () {
       if (this.role.name === 'admin' || this.role.name === 'employee') {
-        this.$store.dispatch('fetchClients')
-        this.$store.dispatch('fetchEmployees')
-        this.$store.dispatch('fetchCompany')
-        this.$store.dispatch('fetchWorkingHours')
-        this.$store.dispatch('fetchPets')
-        this.$store.dispatch('fetchBookings')
-        this.$store.dispatch('fetchPendingBookings')
-        this.$store.dispatch('fetchServices')
+        await this.$store.dispatch('fetchClients')
+        await this.$store.dispatch('fetchEmployees')
+        await this.$store.dispatch('fetchCompany')
+        await this.$store.dispatch('fetchWorkingHours')
+        await this.$store.dispatch('fetchPets')
+        await this.$store.dispatch('fetchBookings')
+        await this.$store.dispatch('fetchPendingBookings')
+        await this.$store.dispatch('fetchServices')
       } else {
-        this.$store.dispatch('fetchCompany')
-        this.$store.dispatch('fetchWorkingHours')
-        this.$store.dispatch('fetchServices')
+        await this.$store.dispatch('fetchCompany')
+        await this.$store.dispatch('fetchWorkingHours')
+        await this.$store.dispatch('fetchServices')
+        await this.$store.dispatch('fetchClientPendingBookings', this.user.client.id)
+        await this.$store.dispatch('fetchClientBookings', this.user.client.id)
+        await this.$store.dispatch('fetchClientPets', this.user.client.id)
       }
     },
     accountMenuItemClicked (action) {

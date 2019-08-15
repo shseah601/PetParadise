@@ -163,7 +163,7 @@ export default {
       val || this.close()
     }
   },
-  
+
   methods: {
 
     editItem (item) {
@@ -178,7 +178,10 @@ export default {
         this.busy = true
         await this.$store.dispatch('deleteClient', client)
         this.busy = false
-        console.log('client deleted', client)
+        this.$store.dispatch('responseMessage', {
+          type: 'success',
+          text: 'Successfully Removed Client'
+        })
       } else {
 
       }
@@ -198,6 +201,10 @@ export default {
         this.busy = true
         await this.$store.dispatch('updateClient', this.editedItem)
         this.busy = false
+        this.$store.dispatch('responseMessage', {
+          type: 'success',
+          text: 'Successfully Edit Client'
+        })
       } else {
         var newItem = Object.assign({}, this.editedItem)
         var otherDetail = {
@@ -209,6 +216,10 @@ export default {
         this.busy = true
         await this.$store.dispatch('createClient', newItem)
         this.busy = false
+        this.$store.dispatch('responseMessage', {
+          type: 'success',
+          text: 'Successfully Add New Client'
+        })
       }
       this.close()
     }

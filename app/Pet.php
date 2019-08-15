@@ -20,7 +20,7 @@ class Pet extends Model
 
     public function pendingBookings()
     {
-      return $this->hasMany(PnedingBooking::class);
+      return $this->hasMany(PendingBooking::class);
     }
     
     public function bookings()

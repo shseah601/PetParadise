@@ -31,6 +31,9 @@ export const mutations = {
     state.pendingBookings = null
     state.groomingBookings = null
     state.boardingBookings = null
+  },
+  [types.FETCH_CLIENT_PENDING_BOOKINGS] (state, { pendingBookings }) {
+    state.pendingBookings = pendingBookings
   }
 
 }
@@ -56,6 +59,10 @@ export const actions = {
   async deletePendingBooking ({ commit }, pendingBooking) {
     const { data } = await axios.delete('/api/pendingBookings/' + pendingBooking.id, pendingBooking)
     commit(types.DELETE_PENDING_BOOKING, { pendingBooking: data })
+  },
+  async fetchClientPendingBookings ({ commit }, clientId) {
+    const { data } = await axios.get('/api/clientPendingBookings/' + clientId)
+    commit(types.FETCH_CLIENT_PENDING_BOOKINGS, { pendingBookings: data })
   }
 }
 

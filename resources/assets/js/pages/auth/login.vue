@@ -70,17 +70,20 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      role: 'authRole'
+      role: 'authRole',
+      user: 'authUser',
+      loaded: 'authLoaded'
     })
   },
 
   methods: {
     async login () {
       if (await this.formHasErrors()) return
-      this.busy = true
+      this.busy = !this.loaded
 
       // Submit the form.
       const { data } = await this.form.post('/api/login')
+      this.form.busy = this.busy
 
       // Save the token.
       this.$store.dispatch('saveToken', {
@@ -90,22 +93,38 @@ export default {
 
       // Fetch the user.
       await this.$store.dispatch('fetchUser')
-      this.busy = false
+
 
       // Redirect home.
       if (this.role.name === 'admin' || this.role.name === 'employee') {
+        await this.$store.dispatch('fetchEmployees')
+        await this.$store.dispatch('fetchBookings')
+        await this.$store.dispatch('fetchPendingBookings')
+        await this.$store.dispatch('fetchServices')
         this.$store.dispatch('fetchClients')
-        this.$store.dispatch('fetchEmployees')
         this.$store.dispatch('fetchCompany')
         this.$store.dispatch('fetchWorkingHours')
         this.$store.dispatch('fetchPets')
-        this.$store.dispatch('fetchBookings')
-        this.$store.dispatch('fetchPendingBookings')
-        this.$store.dispatch('fetchServices')
+
+        if (this.role.name === 'admin') {
+
+        } else {
+          this.$store.dispatch('fetchEmployee', this.user.employee)
+        }
+
         this.$router.push({ name: 'admin.dashboard' })
       } else {
+        await this.$store.dispatch('fetchCompany')
+        await this.$store.dispatch('fetchWorkingHours')
+        this.$store.dispatch('fetchServices')
+        this.$store.dispatch('fetchClient', this.user.client)
+        this.$store.dispatch('fetchClientPendingBookings', this.user.client.id)
+        this.$store.dispatch('fetchClientBookings', this.user.client.id)
+        this.$store.dispatch('fetchClientPets', this.user.client.id)
+
         this.$router.push({ name: 'client.home' })
       }
+      this.$store.dispatch('dataLoaded', true)
     }
   }
 }

@@ -23,6 +23,13 @@ class PetController extends Controller
     return new PetCollection($pets);
   }
 
+  public function getClientPets($id)
+  {
+    $pets = Pet::where('client_id', $id)->get();
+    
+    return new PetCollection($pets);
+  }
+
   /**
    * Store a newly created resource in storage.
    *
@@ -32,18 +39,14 @@ class PetController extends Controller
   public function store(Request $request)
   {
     try {
-      $client = Client::where('user_id', $request->user_id)->first();
-
       $pet = new Pet;
       $pet->fill($request->all());
-      $pet->client_id = $client->id;
+      $pet->client_id = $request->client_id;
       $pet->saveOrFail();
 
-      return response()->json([
-        'id' => $pet->id,
-        'user_id' => $pet->client_id,
-        'created_at' => $pet->created_at,
-      ], 201);
+      $pet = Pet::with('client')->find($pet->id);
+
+      return new PetResource($pet);
     } catch (QueryException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),

@@ -17,7 +17,7 @@ class CreateBookingsTable extends Migration
             $table->increments('id');
             $table->integer('client_id')->unsigned();
             $table->integer('pet_id')->unsigned();
-            $table->integer('employee_id')->unsigned();
+            $table->integer('employee_id')->nullable()->unsigned();
             $table->integer('service_id')->unsigned();
             $table->datetime('start_time');
             $table->datetime('end_time');

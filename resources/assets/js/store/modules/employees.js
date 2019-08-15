@@ -60,5 +60,5 @@ export const actions = {
 // getters
 export const getters = {
   employees: state => state.employees.data,
-  employee: state => state.employee
+  employee: state => state.employee.data
 }

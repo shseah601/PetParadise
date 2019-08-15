@@ -142,7 +142,7 @@ export default {
         {
           title: 'Bookings',
           icon: 'event',
-          route: { name: 'client.bookings' }
+          route: { name: 'client.history.bookings' }
         },
         {
           title: 'Pets',

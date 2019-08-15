@@ -24,4 +24,32 @@ class PendingBookingPolicy
         return false;
       }
     }
+
+    public function update(User $user, PendingBooking $pendingBooking)
+    {
+      $user = auth()->user();
+      $role = $user->roles()->pluck('id')->first();
+      $client = $user->client;
+      if ($role == 1 || $role == 2) {
+        return true;
+      } else if ($pendingBooking->client_id == $client->id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    public function delete(User $user, PendingBooking $pendingBooking)
+    {
+      $user = auth()->user();
+      $role = $user->roles()->pluck('id')->first();
+      $client = $user->client;
+      if ($role == 1 || $role == 2) {
+        return true;
+      } else if ($pendingBooking->client_id == $client->id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
 }

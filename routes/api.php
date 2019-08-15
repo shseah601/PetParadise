@@ -32,13 +32,16 @@ Route::middleware(['auth:api'])->group(function () {
   Route::patch('settings/profile', 'Settings\UpdateProfile');
   Route::patch('settings/password', 'Settings\UpdatePassword');
 
-  Route::apiResource('company', 'CompanyController')->except(['update']);
-  Route::post('company/{id}', 'CompanyController@update');
+  Route::apiResource('company', 'CompanyController');
+  // Route::post('company/{id}', 'CompanyController@update');
   Route::apiResource('clients', 'ClientController');
   Route::apiResource('employees', 'EmployeeController');
   Route::apiResource('pendingBookings', 'PendingBookingController');
+  Route::get('clientPendingBookings/{id}', 'PendingBookingController@getClientPendingBookings');
   Route::apiResource('bookings', 'BookingController');
+  Route::get('clientBookings/{id}', 'BookingController@getClientBookings');
   Route::apiResource('pets', 'PetController');
+  Route::get('clientPets/{id}', 'PetController@getClientPets');
   Route::apiResource('services', 'ServiceController');
   Route::apiResource('workinghours', 'WorkingHourController')->except(['update']);
   Route::post('updateWorkingHours', 'WorkingHourController@updateWorkingHours');
@@ -80,14 +83,18 @@ Route::middleware(['auth:api', 'can:manage-admin-panel'])->group(function () {
   ]);
 });
 
-//admin, employee client
+//admin, employee, client
 Route::middleware(['auth:api', 'can:manage-bookings'])->group(function () {
   Route::apiResource('bookings', 'BookingController')->only([
     'store',
     'update'
   ]);
+  Route::apiResource('pendingBookings', 'PendingBookingController')->only([
+    'store',
+    'update'
+  ]);
 });
-//admin, employee client
+//admin, employee, client
 Route::middleware(['auth:api', 'can:manage-pets'])->group(function () {
   Route::apiResource('pets', 'PetController')->only([
     'store',

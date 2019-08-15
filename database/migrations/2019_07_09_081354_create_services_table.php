@@ -21,8 +21,8 @@ class CreateServicesTable extends Migration
             $table->double('price_max');
             $table->string('description');
             $table->string('image');
-            $table->string('duration')->nullable();
-            $table->string('capacity')->nullable();
+            $table->integer('duration')->nullable();
+            $table->integer('capacity')->nullable();
             $table->timestampsTz();
             $table->softDeletesTz();
 

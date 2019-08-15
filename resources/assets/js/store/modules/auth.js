@@ -7,6 +7,7 @@ export const state = {
   user: null,
   role: null,
   detail: null,
+  loaded: null,
   token: Cookies.get('token')
 }
 
@@ -41,12 +42,17 @@ export const mutations = {
     state.token = null
     state.role = null
     state.detail = null
+    state.loaded = null
 
     Cookies.remove('token')
   },
 
   [types.UPDATE_USER] (state, { user }) {
     state.user = user
+  },
+
+  [types.UPDATE_LOADED] (state, loaded) {
+    state.loaded = loaded
   }
 }
 
@@ -67,6 +73,10 @@ export const actions = {
 
   async updateUser ({ commit }, payload) {
     commit(types.UPDATE_USER, payload)
+  },
+
+  async dataLoaded ({ commit }, payload) {
+    commit(types.UPDATE_LOADED, payload)
   },
 
   async logout ({ commit }) {
@@ -92,5 +102,6 @@ export const getters = {
   authToken: state => state.token,
   authCheck: state => state.user !== null,
   authRole: state => state.role,
-  authDetail: state => state.detail
+  authDetail: state => state.detail,
+  authLoaded: state => state.loaded
 }

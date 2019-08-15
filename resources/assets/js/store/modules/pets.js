@@ -10,7 +10,7 @@ export const state = {
 // mutations
 export const mutations = {
   [types.CREATE_PET] (state, { pet }) {
-    state.pets.data.push(pet)
+    state.pets.data.push(pet.data)
   },
   [types.FETCH_PETS] (state, { pets }) {
     state.pets = pets
@@ -29,6 +29,9 @@ export const mutations = {
   [types.CLEAR_PETS] (state) {
     state.pet = null
     state.pets = null
+  },
+  [types.FETCH_CLIENT_PETS] (state, { pets }) {
+    state.pets = pets
   }
 
 }
@@ -54,6 +57,10 @@ export const actions = {
   async deletePet ({ commit }, pet) {
     const { data } = await axios.delete('/api/pets/' + pet.id, pet)
     commit(types.DELETE_PET, { pet: data })
+  },
+  async fetchClientPets ({ commit }, clientId) {
+    const { data } = await axios.get('/api/clientPets/' + clientId)
+    commit(types.FETCH_CLIENT_PETS, { pets: data })
   }
 }
 
