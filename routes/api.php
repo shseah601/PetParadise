@@ -62,8 +62,7 @@ Route::middleware(['auth:api', 'can:manage-company'])->group(function () {
 //admin
 Route::middleware(['auth:api', 'can:manage-employees'])->group(function () {
   Route::apiResource('employees', 'EmployeeController')->only([
-    'store',
-    'update'
+    'store'
   ]);
 });
 

@@ -7,7 +7,7 @@
       <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
     </v-card-title>
     <v-card-text>
-      <v-data-table :headers="headers" :items="bookings" :search="search" class="elevation-1">
+      <v-data-table :headers="headers" :items="bookings" :search="search" class="elevation-1" :pagination.sync="pagination">
         <template v-slot:items="props">
           <td>{{ props.item.id }}</td>
           <td class="text-xs-left">{{ props.item.service.name }}</td>
@@ -41,6 +41,10 @@ export default {
     search: '',
     busy: false,
     dialog: false,
+    pagination: {
+      descending: true,
+      sortBy: 'start_time'
+    },
     headers: [
       { text: 'id', align: 'left', value: 'id' },
       { text: 'Service', value: 'service.name' },

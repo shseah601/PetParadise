@@ -10,7 +10,7 @@ export const state = {
 // mutations
 export const mutations = {
   [types.CREATE_PENDING_BOOKING] (state, { pendingBooking }) {
-    state.pendingBookings.data.push(pendingBooking)
+    state.pendingBookings.data.push(pendingBooking.data)
   },
   [types.FETCH_PENDING_BOOKINGS] (state, { pendingBookings }) {
     state.pendingBookings = pendingBookings
@@ -28,9 +28,7 @@ export const mutations = {
   },
   [types.CLEAR_PENDING_BOOKINGS] (state) {
     state.pendingBooking = null
-    state.pendingBookings = null
-    state.groomingBookings = null
-    state.boardingBookings = null
+    state.pendingBookings.data = []
   },
   [types.FETCH_CLIENT_PENDING_BOOKINGS] (state, { pendingBookings }) {
     state.pendingBookings = pendingBookings

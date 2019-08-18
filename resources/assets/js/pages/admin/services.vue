@@ -7,11 +7,6 @@
       <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="500px">
-        <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark class="mb-2" v-on="on">
-            <v-icon left dark>add_circle</v-icon>New
-          </v-btn>
-        </template>
         <v-card>
           <v-form ref="form" @submit.prevent="submit">
             <v-card-title>
@@ -60,12 +55,31 @@
                       required
                     ></v-text-field>
                   </v-flex>
+                  <v-flex v-if="editedItem.duration > -1" xs12 sm12 md12>
+                    <v-text-field
+                      v-model.number="editedItem.duration"
+                      :rules="rules.duration"
+                      type="number"
+                      label="Duration"
+                      min="1"
+                      required
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex v-if="editedItem.capacity > -1" xs12 sm12 md12>
+                    <v-text-field
+                      v-model.number="editedItem.capacity"
+                      :rules="rules.capacity"
+                      type="number"
+                      label="Capacity"
+                      min="1"
+                      required
+                    ></v-text-field>
+                  </v-flex>
                   <v-flex v-show="false" xs12 sm12 md12>
                     <v-text-field
                       v-model="editedItem.image"
                       :rules="rules.image"
-                      type="number"
-                      label="Maximum Price"
+                      label="Image"
                       required
                     ></v-text-field>
                   </v-flex>
@@ -96,10 +110,11 @@
           <td class="text-xs-left">{{ props.item.type }}</td>
           <td class="text-xs-left">RM {{ props.item.price_min }}</td>
           <td class="text-xs-left">RM {{ props.item.price_max }}</td>
+          <td class="text-xs-left">{{ props.item.duration ? props.item.duration : '-' }}</td>
+          <td class="text-xs-left">{{ props.item.capacity ? props.item.capacity : '-' }}</td>
           <td class="text-xs-left">{{ props.item.description }}</td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-            <v-icon small @click="deleteItem(props.item)">delete</v-icon>
           </td>
         </template>
         <template v-slot:no-results>
@@ -133,6 +148,8 @@ export default {
       { text: 'Type', value: 'type' },
       { text: 'Price Mininum', value: 'price_min' },
       { text: 'Price Maximum', value: 'price_max' },
+      { text: 'Duration (hour)', value: 'duration' },
+      { text: 'Capacity (pets)', value: 'capacity' },
       { text: 'Description', value: 'description' },
       { text: 'Actions', value: 'name', sortable: false }
     ],
@@ -140,16 +157,20 @@ export default {
     editedItem: {
       name: '',
       type: '',
-      price_min: '',
-      price_max: '',
+      price_min: 0,
+      price_max: 0,
+      duration: 1,
+      capacity: 1,
       description: '',
       image: ''
     },
     defaultItem: {
       name: '',
       type: '',
-      price_min: '',
-      price_max: '',
+      price_min: 0,
+      price_max: 0,
+      duration: 1,
+      capacity: 1,
       description: '',
       image: ''
     },

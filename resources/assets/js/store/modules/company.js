@@ -28,7 +28,7 @@ export const actions = {
     commit(types.FETCH_COMPANY, { company: data })
   },
   async updateCompany ({ commit }, company) {
-    const { data } = await axios.post('/api/company/' + 1, company)
+    const { data } = await axios.put('/api/company/' + 1, company)
     commit(types.UPDATE_COMPANY, { company: data })
   }
 }

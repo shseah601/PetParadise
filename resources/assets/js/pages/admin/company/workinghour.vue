@@ -273,6 +273,10 @@ export default {
       await this.$store.dispatch('updateWorkingHours', this.submit)
       this.defaultWorkinghours = JSON.parse(JSON.stringify(this.editedWorkinghours))
       this.busy = false
+      this.$store.dispatch('responseMessage', {
+        type: 'success',
+        text: 'Successfully Updated Working Hours'
+      })
     }
   }
 }

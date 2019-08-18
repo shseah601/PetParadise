@@ -205,8 +205,8 @@
                   </v-card>
                   <v-spacer></v-spacer>
                   <v-layout row wrap>
-                    <v-spacer></v-spacer>
                     <v-btn @click="prevStep" flat>Back</v-btn>
+                    <v-spacer></v-spacer>
                     <v-btn
                       class="white--text"
                       color="red darken-3"
@@ -255,8 +255,8 @@
                     </v-layout>
                   </v-card>
                   <v-layout row wrap>
-                    <v-spacer></v-spacer>
                     <v-btn @click="prevStep" flat>Back</v-btn>
+                    <v-spacer></v-spacer>
                     <v-btn
                       class="white--text"
                       color="red darken-3"
@@ -302,6 +302,7 @@
                     </v-layout>
                   </v-card>
                   <v-layout row wrap>
+                    <v-btn @click="prevStep" flat>Back</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn
                       class="white--text"
@@ -370,10 +371,14 @@ export default {
       // find the selected week
       this.currentViewWeek = []
       const date = new Date(this.selectedDate)
-      const diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 0)
-      const lastday = date.getDate() - (date.getDay() - 1) + 6
-      let startDate = new Date(date.setDate(diff))
-      let endDate = new Date(date.setDate(lastday))
+      // get current date
+      var first = date.getDate() - date.getDay()
+      // First day is the day of the month - the day of the week
+      // var last = first + 6
+      // last day is the first day + 6
+      var startDate = new Date(date.setDate(first))
+      var endDate = new Date(date.setDate(date.getDate() + 6))
+
       startDate = startDate.toISOString().substr(0, 10)
       const start = {
         name: this.weekDay[0],
@@ -385,9 +390,10 @@ export default {
       this.currentViewWeek.push(start)
       var counter
       for (counter = 1; counter < 6; counter++) {
-        var nextDate = new Date(date.setDate(diff))
-        nextDate = new Date(date.setDate(date.getDate() + counter))
+        var nextDate = new Date(startDate)
+        nextDate = new Date(nextDate.setDate(nextDate.getDate() + counter))
         nextDate = nextDate.toISOString().substr(0, 10)
+
         const next = {
           name: this.weekDay[counter],
           date: nextDate,
@@ -413,8 +419,12 @@ export default {
         // can be optimized to map the current view week's booked date
         var j
         for (j = 0; j < this.selectedService.bookings.length; j++) {
-          const time = this.selectedService.bookings[j].start_time
-          this.map.set(time, time)
+          if (this.selectedService.bookings[j].status === 'rejected' || this.selectedService.bookings[j].status === 'cancelled') {
+
+          } else {
+            const time = this.selectedService.bookings[j].start_time
+            this.map.set(time, time)
+          }
         }
         var k
         for (k = 0; k < this.selectedService.pendingBookings.length; k++) {
@@ -446,9 +456,13 @@ export default {
           index += 1
         })
       } else if (this.selectedService.id === 2) {
-
       }
+    },
+    selectedService () {
+      this.selectedDate = new Date().toISOString().substr(0, 10)
     }
+  },
+  created () {
   },
   methods: {
     truncate (text) {
@@ -463,9 +477,7 @@ export default {
     },
     selectService (service) {
       this.selectedService = service
-      if (this.selectedDate == null) {
-        this.selectedDate = new Date().toISOString().substr(0, 10)
-      }
+
       this.nextStep()
     },
     calendarPrev () {

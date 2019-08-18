@@ -1,8 +1,9 @@
 export default ({ employeeAuthGuard, authGuard, guestGuard }) => [
-  { path: '/admin', redirect: { name: 'admin.dashboard' } },
+  { path: '/', redirect: { name: 'client.home' } },
 
   // Authenticated routes for authenticated employees
   ...employeeAuthGuard([
+    { path: '/admin', redirect: { name: 'admin.dashboard' } },
     { path: '/admin/dashboard', name: 'admin.dashboard', component: require('~/pages/admin/dashboard.vue') },
     { path: '/admin/calendar', name: 'admin.calendar', component: require('~/pages/admin/calendar.vue') },
     { path: '/admin/services', name: 'admin.services', component: require('~/pages/admin/services.vue') },

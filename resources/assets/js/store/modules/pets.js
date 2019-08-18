@@ -28,7 +28,7 @@ export const mutations = {
   },
   [types.CLEAR_PETS] (state) {
     state.pet = null
-    state.pets = null
+    state.pets.data = []
   },
   [types.FETCH_CLIENT_PETS] (state, { pets }) {
     state.pets = pets

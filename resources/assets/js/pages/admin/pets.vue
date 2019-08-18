@@ -15,7 +15,7 @@
           <td class="text-xs-left">{{ props.item.age }}</td>
           <td class="text-xs-left">{{ props.item.client.name }}</td>
           <td class="justify-center layout px-0">
-          <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+            <v-icon small @click="deleteItem(props.item)">delete</v-icon>
           </td>
         </template>
         <template v-slot:no-results>
@@ -80,7 +80,10 @@ export default {
         this.busy = true
         await this.$store.dispatch('deletePet', pet)
         this.busy = false
-        console.log('pet deleted', pet)
+        this.$store.dispatch('responseMessage', {
+          type: 'success',
+          text: 'Successfully Deleted Pet'
+        })
       } else {
 
       }

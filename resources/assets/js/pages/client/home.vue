@@ -4,7 +4,7 @@
       <v-flex xs12>
         <v-card>
           <v-card-title primary-title>
-            <div class="display-3">{{ $t('app_name') }}</div>
+            <div class="display-3">{{ companyDetail.name }}</div>
           </v-card-title>
           <v-card-text>
             <v-img
@@ -31,9 +31,10 @@
                 <v-data-table :items="workinghours" class="elevation-1" hide-actions hide-headers>
                   <template v-slot:items="props">
                     <td>{{ props.item.name }}</td>
-                    <td
+                    <td v-if="props.item.status == 1"
                       class="text-xs-right"
                     >{{ getTimeRange(props.item.start_time, props.item.end_time) }}</td>
+                    <td v-else>Closed</td>
                   </template>
                 </v-data-table>
               </v-card-text>

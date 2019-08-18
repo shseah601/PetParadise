@@ -104,7 +104,12 @@ export default {
       }
 
       // Log out the user.
-      await this.$store.dispatch('logout')
+      if (this.role.name === 'admin' || this.role.name === 'employee') {
+        await this.$store.dispatch('logout')
+      } else {
+        await this.$store.dispatch('clientLogout')
+      }
+
       this.busy = false
 
       // Redirect to login.

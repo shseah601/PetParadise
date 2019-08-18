@@ -94,7 +94,6 @@ export default {
       // Fetch the user.
       await this.$store.dispatch('fetchUser')
 
-
       // Redirect home.
       if (this.role.name === 'admin' || this.role.name === 'employee') {
         await this.$store.dispatch('fetchEmployees')

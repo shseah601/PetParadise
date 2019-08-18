@@ -27,20 +27,20 @@
             >
               <template v-if="type == 'month'" v-slot:day="{ date }">
                 <template v-for="event in eventsMap[date]">
-                  <v-menu :key="event.service.name" v-model="event.open" full-width offset-x>
+                  <v-menu v-if="event.status != 'rejected' && event.status != 'cancelled'" :key="event.service.name" v-model="event.open" full-width offset-x>
                     <template v-slot:activator="{ on }">
                       <div
                         v-ripple
                         class="my-event"
                         v-on="on"
                         v-html="event.service.name"
-                        :style="checkIfSmallerThanNow(event.end_time) ? 'background-color: #07ab4e;' : ''"
+                        :style=" event.status == 'rejected' || event.status == 'cancelled' ? 'background-color: #E53935;' : checkIfSmallerThanNow(event.end_time) ? 'background-color: #07ab4e;' : ''"
                       ></div>
                     </template>
                     <v-card color="grey lighten-4" max-width="350px" flat>
                       <v-toolbar
                         class="white--text"
-                        :color="checkIfSmallerThanNow(event.end_time) ? '#07ab4e' : ''"
+                        :color="event.status == 'rejected' || event.status == 'cancelled' ? '#E53935' :checkIfSmallerThanNow(event.end_time) ? '#07ab4e' : '#1867c0'"
                       >
                         <v-toolbar-title v-html="event.service.name"></v-toolbar-title>
                       </v-toolbar>
@@ -62,7 +62,7 @@
                             <div class="font-weight-bold">Employee Name:</div>
                           </v-flex>
                           <v-flex xs6>
-                            <div>{{event.employee.name}}</div>
+                            <div>{{event.employee ? event.employee.name : '-'}}</div>
                           </v-flex>
                           <template v-if="event.service.id == 1">
                             <v-flex xs6>
@@ -70,6 +70,12 @@
                             </v-flex>
                             <v-flex xs6>
                               <div>{{getTime(event.start_time)}}</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Status:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{event.status}}</div>
                             </v-flex>
                           </template>
                           <template v-if="event.service.id == 2">
@@ -84,6 +90,12 @@
                             </v-flex>
                             <v-flex xs6>
                               <div>{{getDate(event.end_time)}}</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div class="font-weight-bold">Status:</div>
+                            </v-flex>
+                            <v-flex xs6>
+                              <div>{{event.status}}</div>
                             </v-flex>
                           </template>
                         </v-layout>
@@ -132,7 +144,7 @@
                             <div class="font-weight-bold">Employee Name:</div>
                           </v-flex>
                           <v-flex xs6>
-                            <div>{{event.employee.name}}</div>
+                            <div>{{event.employee ? event.employee.name : '-'}}</div>
                           </v-flex>
                           <template v-if="event.service.id == 1">
                             <v-flex xs6>
@@ -202,7 +214,7 @@
                             <div class="font-weight-bold">Employee Name:</div>
                           </v-flex>
                           <v-flex xs6>
-                            <div>{{event.employee.name}}</div>
+                            <div>{{event.employee ? event.employee.name : '-'}}</div>
                           </v-flex>
                           <template v-if="event.service.id == 1">
                             <v-flex xs6>
@@ -258,6 +270,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'admin-calendar-view',
   data: () => ({
+    isShowCancelOrReject: false,
     type: 'month',
     today: new Date().toISOString().substr(0, 10),
     selectedDate: new Date().toISOString().substr(0, 10),
@@ -345,6 +358,9 @@ export default {
       const diff = Math.abs(new Date(endDate) - new Date(startDate))
       const minutes = Math.floor((diff / 1000) / 60)
       return minutes
+    },
+    showCancelOrReject () {
+      this.isShowCancelOrReject = !this.isShowCancelOrReject
     }
   },
   metaInfo () {

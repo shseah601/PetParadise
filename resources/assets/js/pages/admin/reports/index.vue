@@ -4,7 +4,7 @@
       <v-card>
         <progress-bar :show="busy"></progress-bar>
         <v-card-title class="grey lighten-4">
-          <h3 class="headline mb-0">{{ $t('reports') }}</h3>
+          <h3 class="headline mb-0">{{ $t('bookings') }}</h3>
         </v-card-title>
         <v-divider></v-divider>
 

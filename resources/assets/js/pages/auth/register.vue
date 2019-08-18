@@ -55,6 +55,21 @@
               name="password_confirmation"
               v-validate="'required|confirmed:password'"
             ></password-input>
+
+            <text-input
+              :form="form"
+              label="Phone"
+              :v-errors="errors"
+              :value.sync="form.phone"
+              name="phone"
+              v-validate="'required|max:11'"
+            ></text-input>
+
+            <v-text-field
+              :form="form"
+              label="Address"
+              required
+            ></v-text-field>
           </v-card-text>
 
           <v-card-actions>

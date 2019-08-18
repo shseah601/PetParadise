@@ -27,9 +27,7 @@ export const mutations = {
   },
   [types.CLEAR_BOOKINGS] (state) {
     state.booking = null
-    state.bookings = null
-    state.groomingBookings = null
-    state.boardingBookings = null
+    state.bookings.data = []
   },
   [types.FETCH_CLIENT_BOOKINGS] (state, { bookings }) {
     state.bookings = bookings

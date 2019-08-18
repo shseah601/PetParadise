@@ -83,7 +83,7 @@ class EmployeeController extends Controller
   public function show($id)
   {
     try {
-      $employee = Employee::with(['bookings', 'pendingBookings'])->findOrFail($id);
+      $employee = Employee::with(['bookings'])->findOrFail($id);
 
       return new EmployeeResource($employee);
     } catch (ModelNotFoundException $ex) {

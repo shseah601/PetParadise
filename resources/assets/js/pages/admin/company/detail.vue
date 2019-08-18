@@ -26,7 +26,7 @@
                         <h4 class="title font-weight-regular">Logo</h4>
                       </v-card-title>
                       <v-card-text>
-                        <v-layout row wrap>
+                        <!-- <v-layout row wrap>
                           <v-flex xs12 sm12 md3>
                             <v-btn :disabled="busy" color="primary" @click="onPickFile">Upload Logo</v-btn>
                             <input
@@ -42,7 +42,7 @@
                               <div>{{imageName ? 'Uploaded: ' + imageName : ''}}</div>
                             </v-layout>
                           </v-flex>
-                        </v-layout>
+                        </v-layout>-->
                       </v-card-text>
                     </v-card>
                   </v-layout>
@@ -247,6 +247,10 @@ export default {
       await this.$store.dispatch('updateCompany', this.editedCompany)
       this.defaultCompany = Object.assign({}, this.editedCompany)
       this.busy = false
+      this.$store.dispatch('responseMessage', {
+        type: 'success',
+        text: 'Successfully Updated Company Detail'
+      })
     }
   }
 }

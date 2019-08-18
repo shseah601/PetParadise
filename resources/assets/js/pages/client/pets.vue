@@ -51,6 +51,7 @@
                     <v-text-field
                       v-model="editedItem.age"
                       :rules="rules.age"
+                      type="number"
                       label="Age"
                       required
                     ></v-text-field>
@@ -209,6 +210,7 @@ export default {
           type: 'success',
           text: 'Successfully Add New Pet'
         })
+        this.$store.dispatch('fetchClient', this.authUser.client)
       }
       this.close()
     }

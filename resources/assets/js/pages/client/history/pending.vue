@@ -11,6 +11,7 @@
         :headers="headers"
         :items="pendingBookings"
         :search="search"
+        :pagination.sync="pagination"
         class="elevation-1"
       >
         <template v-slot:items="props">
@@ -47,6 +48,10 @@ export default {
   data: () => ({
     search: '',
     busy: false,
+    pagination: {
+      descending: true,
+      sortBy: 'start_time'
+    },
     headers: [
       { text: 'id', align: 'left', value: 'id' },
       { text: 'Service', value: 'service.name' },
@@ -65,9 +70,7 @@ export default {
       'authUser'
     ])
   },
-  created () {
 
-  },
   watch: {
     dialog (val) {
       val || this.close()

@@ -7,6 +7,7 @@ use App\Http\Requests\PendingBookingRequest;
 use App\PendingBooking;
 use App\Http\Resources\PendingBookingResource;
 use App\Http\Resources\PendingBookingCollection;
+use App\Notifications\TemplateEmail;
 
 class PendingBookingController extends Controller
 {
@@ -44,11 +45,11 @@ class PendingBookingController extends Controller
       $pendingBooking->pet_id = $request->pet_id;
       $pendingBooking->service_id = $request->service_id;
       $pendingBooking->saveOrFail();
+
+      $pendingBooking = PendingBooking::with(['client', 'pet', 'service'])->find($pendingBooking->id);
+      // auth()->user()->notify(new TemplateEmail());
       
-      $pendingBooking = PendingBooking::with(['client','pet','service'])->find($pendingBooking->id);
-
       return new PendingBookingResource($pendingBooking);
-
     } catch (QueryException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
@@ -103,7 +104,7 @@ class PendingBookingController extends Controller
       if (auth()->user()->can('update', $pendingBooking)) {
         $pendingBooking->fill($request->all());
         $pendingBooking->saveOrFail();
-  
+
         return new PendingBookingResource($pendingBooking);
       } else {
         return response()->json([

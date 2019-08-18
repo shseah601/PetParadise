@@ -28,7 +28,7 @@ export const mutations = {
   },
   [types.CLEAR_SERVICES] (state) {
     state.service = null
-    state.services = null
+    state.services.data = []
   }
 
 }

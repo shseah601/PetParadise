@@ -15,7 +15,7 @@ export const mutations = {
     state.workinghours = workinghours
   },
   [types.CLEAR_WORKINGHOURS] (state) {
-    state.workinghours = null
+    state.workinghours.data = []
   }
 
 }
