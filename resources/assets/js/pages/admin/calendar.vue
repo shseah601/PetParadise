@@ -16,7 +16,7 @@
           <div class="headline text-xs-center mb-2">{{ getMonthAndYear(selectedDate) }}</div>
         </v-flex>
         <v-flex xs12>
-          <v-sheet :height="type == 'month' ? '500' : '600' ">
+          <v-sheet :height="type == 'month' ? '' : '600' " max-height="auto">
             <v-calendar
               v-model="selectedDate"
               :now="today"

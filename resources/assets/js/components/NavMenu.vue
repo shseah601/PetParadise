@@ -23,7 +23,7 @@
         <v-list-group prepend-icon="account_circle">
           <template v-slot:activator>
             <v-list-tile>
-              <v-list-tile-title>Users</v-list-tile-title>
+              <v-list-tile-title>User Management</v-list-tile-title>
             </v-list-tile>
           </template>
           <template v-for="(user, i) in adminItems2" >
