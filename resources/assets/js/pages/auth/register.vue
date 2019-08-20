@@ -65,11 +65,14 @@
               v-validate="'required|max:11'"
             ></text-input>
 
-            <v-text-field
+            <text-input
               :form="form"
               label="Address"
-              required
-            ></v-text-field>
+              :v-errors="errors"
+              :value.sync="form.address"
+              name="address"
+              v-validate="'required|max:191'"
+            ></text-input>
           </v-card-text>
 
           <v-card-actions>
@@ -95,29 +98,36 @@ export default {
       name: '',
       email: '',
       password: '',
-      password_confirmation: ''
+      password_confirmation: '',
+      phone: '',
+      address: ''
     }),
     eye: true
   }),
 
   methods: {
     async register () {
+      console.log('test')
       if (await this.formHasErrors()) return
 
       // Register the user.
       const { data } = await this.form.post('/api/register')
 
-      // Log in the user.
-      const { data: { token } } = await this.form.post('/api/login')
+      // // Log in the user.
+      // const { data: { token } } = await this.form.post('/api/login')
 
-      // Save the token.
-      this.$store.dispatch('saveToken', { token })
+      // // Save the token.
+      // this.$store.dispatch('saveToken', { token })
 
-      // Update the user.
-      await this.$store.dispatch('updateUser', { user: data })
+      // // Update the user.
+      // await this.$store.dispatch('updateUser', { user: data })
 
       // Redirect home.
-      this.$router.push({ name: 'client.home' })
+      this.$router.push({ name: 'login' })
+      this.$store.dispatch('responseMessage', {
+        type: 'success',
+        text: 'Successfully Register Account'
+      })
     }
   }
 }
