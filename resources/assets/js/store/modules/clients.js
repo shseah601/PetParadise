@@ -10,7 +10,7 @@ export const state = {
 // mutations
 export const mutations = {
   [types.CREATE_CLIENT] (state, { client }) {
-    state.clients.data.push(client)
+    state.clients.data.push(client.data)
   },
   [types.FETCH_CLIENTS] (state, { clients }) {
     state.clients = clients

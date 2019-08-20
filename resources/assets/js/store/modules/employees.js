@@ -10,7 +10,7 @@ export const state = {
 // mutations
 export const mutations = {
   [types.CREATE_EMPLOYEE] (state, { employee }) {
-    state.employees.data.push(employee)
+    state.employees.data.push(employee.data)
   },
   [types.FETCH_EMPLOYEES] (state, { employees }) {
     state.employees = employees

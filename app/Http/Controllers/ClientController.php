@@ -12,6 +12,7 @@ use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientCollection;
 use App\User;
 use Bouncer;
+use Illuminate\Support\Facades\Mail;
 
 class ClientController extends Controller
 {
@@ -43,18 +44,16 @@ class ClientController extends Controller
       Bouncer::assign('client')->to($user);
     });
 
-    // $clientResource = new ClientResource(Client::with('user')->findOrFail($user->id));
+    // send register email
+    $email = $request1->email;
+    $messageData = ['email' => $request1->email, 'name' => $request2->name];
+    Mail::send('emails.register', $messageData, function ($message) use ($email) {
+      $message->to($email)->subject('Registration with Pet Paradise');
+    });
 
-    return response()->json([
-      "id" => $client->id,
-      "name" => $client->name,
-      "address" => $client->address,
-      "phone" => $client->phone,
-      "user" => [
-        "id" => $user->id,
-        "email" => $user->email
-      ]
-    ], 201);
+    $client = Client::with(['user'])->find($client->id);
+
+    return new ClientResource($client);
   }
 
   /**

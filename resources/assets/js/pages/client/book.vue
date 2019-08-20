@@ -102,11 +102,25 @@
                           </v-flex>
                         </v-flex>
                         <v-flex d-flex xs12 sm12 md9>
+                          <v-dialog v-model="dialog" width="800">
+                            <v-card>
+                              <v-card-title
+                                class="headline grey lighten-2"
+                                primary-title
+                              >Select Duration in days</v-card-title>
+
+                              <v-card-text>
+                                <template v-for="n in 10">
+                                  <v-btn :key="n" @click="selectDuration(n)">{{ n }}</v-btn>
+                                </template>
+                              </v-card-text>
+                            </v-card>
+                          </v-dialog>
                           <v-card>
                             <v-card-title>
                               <v-layout row>
                                 <v-calendar
-                                  v-model="selectedDate"
+                                  v-model="chosenDate"
                                   :now="today"
                                   :start="today"
                                   type="week"
@@ -129,6 +143,26 @@
                                     </v-flex>
                                     <v-flex xs12 class="text-xs-center">
                                       <v-btn color="primary" small @click="calendarToday">Today</v-btn>
+                                      <v-menu
+                                        v-model="dobMenu"
+                                        :close-on-content-click="false"
+                                        :nudge-right="40"
+                                        lazy
+                                        transition="scale-transition"
+                                        offset-y
+                                        full-width
+                                        max-width="290px"
+                                        min-width="290px"
+                                      >
+                                        <template v-slot:activator="{ on }">
+                                          <v-btn small dark v-on="on">Show Calendar</v-btn>
+                                        </template>
+                                        <v-date-picker
+                                          v-model="chosenDate"
+                                          no-title
+                                          @input="dobMenu = false"
+                                        ></v-date-picker>
+                                      </v-menu>
                                     </v-flex>
                                   </v-layout>
                                 </v-flex>
@@ -147,23 +181,46 @@
                               <div class="font-weight-bold mb-3">Select a time below</div>
                               <template v-for="day in currentViewWeek">
                                 <v-card :key="day.name" flat>
-                                  <v-card-title>{{day.date + ' - ' + day.name}}</v-card-title>
-                                  <v-card-text>
-                                    <template
-                                      v-if="day.status == 1 && (day.availableTime.length !== 0)"
-                                    >
-                                      <template v-for="session in day.availableTime">
-                                        <v-btn
-                                          v-if="session.available"
-                                          :key="session.time"
-                                          @click="selectTime(session.time)"
-                                        >{{ getTimeWithoutSeconds(session.time) }}</v-btn>
+                                  <template v-if="selectedService.id == 1">
+                                    <v-card-title>{{day.date + ' - ' + day.name}}</v-card-title>
+                                    <v-card-text>
+                                      <template
+                                        v-if="day.status == 1 && (day.availableTime.length !== 0)"
+                                      >
+                                        <template v-for="session in day.availableTime">
+                                          <v-btn
+                                            v-if="session.available"
+                                            :key="session.time"
+                                            @click="selectTime(session.time)"
+                                          >{{ getTimeWithoutSeconds(session.time) }}</v-btn>
+                                        </template>
                                       </template>
+                                      <template v-else>
+                                        <div>N/A</div>
+                                      </template>
+                                    </v-card-text>
+                                  </template>
+                                  <template v-else>
+                                    <template>
+                                      <v-card-title>
+                                        <v-layout row wrap>
+                                          <v-flex xs6>
+                                            <div>{{day.date + ' - ' + day.name}}</div>
+                                          </v-flex>
+                                          <v-flex xs6>
+                                            <v-layout align-center justify-center row fill-height>
+                                              <v-btn
+                                                v-if="!checkIfSmallerThanNow(day.date)"
+                                                @click="selectDate(day.date)"
+                                                block
+                                              >Book</v-btn>
+                                              <!-- <div>Available Slots: {{ 'N/A' }}</div> -->
+                                            </v-layout>
+                                          </v-flex>
+                                        </v-layout>
+                                      </v-card-title>
                                     </template>
-                                    <template v-else>
-                                      <div>N/A</div>
-                                    </template>
-                                  </v-card-text>
+                                  </template>
                                 </v-card>
                               </template>
                             </v-card-text>
@@ -271,32 +328,62 @@
                       <v-card max-width="350">
                         <v-card-title class="headline">Booking Confirmation</v-card-title>
                         <v-card-text>
-                          <v-layout row wrap>
-                            <v-flex xs6>
-                              <div class="font-weight-bold">Selected Service:</div>
-                            </v-flex>
-                            <v-flex xs6>
-                              <div>{{selectedService.name}}</div>
-                            </v-flex>
-                            <v-flex xs6>
-                              <div class="font-weight-bold">Selected Service Price Range:</div>
-                            </v-flex>
-                            <v-flex xs6>
-                              <div>RM {{selectedService.price_min}} - {{selectedService.price_max}}</div>
-                            </v-flex>
-                            <v-flex xs6>
-                              <div class="font-weight-bold">Selected Time:</div>
-                            </v-flex>
-                            <v-flex xs6>
-                              <div>{{selectedTime}}</div>
-                            </v-flex>
-                            <v-flex xs6>
-                              <div class="font-weight-bold">Selected Pet:</div>
-                            </v-flex>
-                            <v-flex xs6>
-                              <div>{{selectedPet.name}}</div>
-                            </v-flex>
-                          </v-layout>
+                          <template v-if="selectedService.id == 1">
+                            <v-layout row wrap>
+                              <v-flex xs6>
+                                <div class="font-weight-bold">Selected Service:</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div>{{selectedService.name}}</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div class="font-weight-bold">Selected Service Price Range:</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div>RM {{selectedService.price_min}} - {{selectedService.price_max}}</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div class="font-weight-bold">Selected Time:</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div>{{selectedTime}}</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div class="font-weight-bold">Selected Pet:</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div>{{selectedPet.name}}</div>
+                              </v-flex>
+                            </v-layout>
+                          </template>
+                          <template v-else>
+                            <v-layout row wrap>
+                              <v-flex xs6>
+                                <div class="font-weight-bold">Selected Service:</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div>{{selectedService.name}}</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div class="font-weight-bold">Selected Service Price Range:</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div>RM {{selectedService.price_min}} - {{selectedService.price_max}}</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div class="font-weight-bold">Selected Date:</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div>{{selectedDate}} - {{selectedEndDate}}</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div class="font-weight-bold">Selected Pet:</div>
+                              </v-flex>
+                              <v-flex xs6>
+                                <div>{{selectedPet.name}}</div>
+                              </v-flex>
+                            </v-layout>
+                          </template>
                         </v-card-text>
                       </v-card>
                     </v-layout>
@@ -331,14 +418,22 @@ export default {
     return { title: this.$t('services') }
   },
   data: () => ({
+    dialog: false,
+    dobMenu: false,
     step: 0,
     selectedService: {
       id: 0,
       name: ''
     },
+    previousService: {
+      id: 0,
+      name: ''
+    },
     selectedTime: null,
     today: new Date().toISOString().substr(0, 10),
+    chosenDate: null,
     selectedDate: null,
+    selectedEndDate: null,
     currentViewWeek: [],
     currentViewWeekString: '',
     selectedPet: {
@@ -367,10 +462,11 @@ export default {
     ])
   },
   watch: {
-    selectedDate () {
+    chosenDate () {
+      console.log('changed date', this.chosenDate)
       // find the selected week
       this.currentViewWeek = []
-      const date = new Date(this.selectedDate)
+      const date = new Date(this.chosenDate)
       // get current date
       var first = date.getDate() - date.getDay()
       // First day is the day of the month - the day of the week
@@ -456,10 +552,18 @@ export default {
           index += 1
         })
       } else if (this.selectedService.id === 2) {
+
       }
     },
     selectedService () {
-      this.selectedDate = new Date().toISOString().substr(0, 10)
+      console.log('changed service')
+      this.chosenDate = this.today
+    },
+    step () {
+      console.log(this.step)
+      if (this.step < 2) {
+        this.chosenDate = null
+      }
     }
   },
   created () {
@@ -487,7 +591,7 @@ export default {
       this.$refs.calendar.next()
     },
     calendarToday () {
-      this.selectedDate = this.today
+      this.chosenDate = this.today
     },
     getSessionsBetweenDates (startTime, endTime) {
       const startDate = new Date('2019 ' + startTime)
@@ -529,32 +633,63 @@ export default {
       this.selectedTime = time
       this.nextStep()
     },
+    selectDate (date) {
+      this.selectedDate = date
+      this.dialog = true
+    },
+    selectDuration (duration) {
+      var startDate = new Date(this.selectedDate)
+      this.selectedEndDate = new Date(startDate.setDate(startDate.getDate() + duration)).toISOString().substr(0, 10)
+      this.dialog = false
+      this.nextStep()
+    },
     selectPet (pet) {
       this.selectedPet = pet
       this.nextStep()
     },
-    checkSelectedItems () {
+    checkSelectedItemsGrooming () {
       return !!this.selectedService && !!this.selectedTime && !!this.selectedPet
     },
+    checkSelectedItemsBoarding () {
+      return !!this.selectedService && !!this.selectedDate && !!this.selectedEndDate && !!this.selectedPet
+    },
     async confirm () {
-      if (!this.checkSelectedItems()) return
-      console.log('started')
-      this.busy = true
+      if (this.selectedService.id === 1) {
+        if (!this.checkSelectedItemsGrooming()) return
+        console.log('started for grooming')
+        this.busy = true
 
-      var startTime = new Date(this.selectedTime)
-      var endTime = new Date(startTime.setHours(startTime.getHours() + this.selectedService.duration))
-      endTime = this.getISOString(endTime)
+        var startTime = new Date(this.selectedTime)
+        var endTime = new Date(startTime.setHours(startTime.getHours() + this.selectedService.duration))
+        endTime = this.getISOString(endTime)
 
-      var pendingBooking = {
-        client_id: this.client.id,
-        pet_id: this.selectedPet.id,
-        service_id: this.selectedService.id,
-        start_time: this.selectedTime,
-        end_time: endTime,
-        status: 'pending'
+        const pendingBooking = {
+          client_id: this.client.id,
+          pet_id: this.selectedPet.id,
+          service_id: this.selectedService.id,
+          start_time: this.selectedTime,
+          end_time: endTime,
+          status: 'pending'
+        }
+        console.log(pendingBooking)
+        await this.$store.dispatch('createPendingBooking', pendingBooking)
+      } else {
+        if (!this.checkSelectedItemsBoarding()) return
+        console.log('started for boarding')
+        this.busy = true
+
+        const pendingBooking = {
+          client_id: this.client.id,
+          pet_id: this.selectedPet.id,
+          service_id: this.selectedService.id,
+          start_time: this.getISOString(this.selectedDate),
+          end_time: this.getISOString(this.selectedEndDate),
+          status: 'pending'
+        }
+        console.log(pendingBooking)
+        await this.$store.dispatch('createPendingBooking', pendingBooking)
       }
 
-      await this.$store.dispatch('createPendingBooking', pendingBooking)
       this.$store.dispatch('fetchServices')
       this.busy = false
 

@@ -19,6 +19,7 @@ class BookingResource extends JsonResource
           'start_time' => $this->when(!is_null($this->start_time), $this->start_time),
           'end_time' => $this->when(!is_null($this->end_time), $this->end_time),
           'status' => $this->when(!is_null($this->status), $this->status),
+          'created_at' => $this->when(!is_null($this->created_at), $this->created_at),
           'client' => new ClientResource($this->whenLoaded('client')),
           'pet' => new PetResource($this->whenLoaded('pet')),
           'employee' => new EmployeeResource($this->whenLoaded('employee')),

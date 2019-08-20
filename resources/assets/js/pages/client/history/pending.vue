@@ -21,6 +21,7 @@
           <td class="text-xs-left">{{ props.item.end_time }}</td>
           <td class="text-xs-left">{{ props.item.pet.name }}</td>
           <td class="text-xs-left">{{ props.item.status }}</td>
+          <td class="text-xs-left">{{ getISOString(props.item.created_at.date) }}</td>
           <td class="justify-center layout px-0">
             <v-icon small @click="deleteItem(props.item)">delete</v-icon>
           </td>
@@ -50,7 +51,7 @@ export default {
     busy: false,
     pagination: {
       descending: true,
-      sortBy: 'start_time'
+      sortBy: 'updated_at'
     },
     headers: [
       { text: 'id', align: 'left', value: 'id' },
@@ -59,6 +60,7 @@ export default {
       { text: 'End Time', value: 'end_time' },
       { text: 'Pet', value: 'pet.name' },
       { text: 'Status', value: 'status' },
+      { text: 'Booked on', value: 'created_at' },
       { text: 'Actions', value: 'id', sortable: false }
 
     ]
@@ -77,6 +79,12 @@ export default {
     }
   },
   methods: {
+    getISOString (date) {
+      const d = new Date(date).toISOString().substr(0, 10)
+      const t = new Date(date).toTimeString().substr(0, 8)
+
+      return `${d} ${t}`
+    },
     async deleteItem (pendingBooking) {
       var r = confirm('Are you sure you want to cancel this item?')
       if (r) {

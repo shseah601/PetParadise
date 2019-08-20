@@ -111,7 +111,7 @@ export default {
       if (await this.formHasErrors()) return
 
       // Register the user.
-      const { data } = await this.form.post('/api/register')
+      await this.form.post('/api/register')
 
       // // Log in the user.
       // const { data: { token } } = await this.form.post('/api/login')

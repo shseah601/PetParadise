@@ -7,7 +7,13 @@
       <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
     </v-card-title>
     <v-card-text>
-      <v-data-table :headers="headers" :items="bookings" :search="search" class="elevation-1" :pagination.sync="pagination">
+      <v-data-table
+        :headers="headers"
+        :items="bookings"
+        :search="search"
+        class="elevation-1"
+        :pagination.sync="pagination"
+      >
         <template v-slot:items="props">
           <td>{{ props.item.id }}</td>
           <td class="text-xs-left">{{ props.item.service.name }}</td>
@@ -16,6 +22,7 @@
           <td class="text-xs-left">{{ props.item.pet.name }}</td>
           <td class="text-xs-left">{{ props.item.employee ? props.item.employee.name : '-' }}</td>
           <td class="text-xs-left">{{ props.item.status }}</td>
+          <td class="text-xs-left">{{ getISOString(props.item.created_at.date) }}</td>
         </template>
         <template v-slot:no-results>
           <v-alert
@@ -52,7 +59,9 @@ export default {
       { text: 'End Time', value: 'end_time' },
       { text: 'Pet', value: 'pet.name' },
       { text: 'Employee', value: 'employee.name' },
-      { text: 'Status', value: 'status' }
+      { text: 'Status', value: 'status' },
+      { text: 'Booked on', value: 'created_at' }
+
     ]
   }),
 
@@ -65,6 +74,14 @@ export default {
   watch: {
     dialog (val) {
       val || this.close()
+    }
+  },
+  methods: {
+    getISOString (date) {
+      const d = new Date(date).toISOString().substr(0, 10)
+      const t = new Date(date).toTimeString().substr(0, 8)
+
+      return `${d} ${t}`
     }
   }
 }

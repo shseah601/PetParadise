@@ -50,19 +50,9 @@ class EmployeeController extends Controller
         Bouncer::assign('employee')->to($user);
       });
 
-      return response()->json([
-        'id' => $employee->id,
-        'name' => $employee->name,
-        'address' => $employee->address,
-        'phone' => $employee->phone,
-        'gender' => $employee->gender,
-        'ic_no' => $employee->ic_no,
-        'dob' => $employee->dob,
-        "user" => [
-          "id" => $user->id,
-          "email" => $user->email
-        ]
-      ], 201);
+      $employee = Employee::with('user')->find($employee->id);
+
+      return new EmployeeResource($employee);
     } catch (QueryException $ex) {
       return response()->json([
         'message' => $ex->getMessage(),
