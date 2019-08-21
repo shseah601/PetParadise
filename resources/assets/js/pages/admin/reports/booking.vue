@@ -23,6 +23,7 @@
           <td class="text-xs-left">{{ props.item.pet.name }}</td>
           <td class="text-xs-left">{{ props.item.employee ? props.item.employee.name : '-'}}</td>
           <td class="text-xs-left">{{ props.item.status }}</td>
+          <td class="text-xs-left">{{ getISOString(props.item.created_at.date) }}</td>
         </template>
         <template v-slot:no-results>
           <v-alert
@@ -50,7 +51,7 @@ export default {
     dialog: false,
     pagination: {
       descending: true,
-      sortBy: 'start_time'
+      sortBy: 'created_at.date'
     },
     headers: [
       { text: 'id', align: 'left', value: 'id' },
@@ -60,7 +61,9 @@ export default {
       { text: 'Client', value: 'client.name' },
       { text: 'Pet', value: 'pet.name' },
       { text: 'Employee', value: 'employee.name' },
-      { text: 'Status', value: 'status' }
+      { text: 'Status', value: 'status' },
+      { text: 'Booked on', value: 'created_at.date' }
+
     ]
   }),
 
@@ -73,6 +76,14 @@ export default {
   watch: {
     dialog (val) {
       val || this.close()
+    }
+  },
+  methods: {
+    getISOString (date) {
+      const d = new Date(date).toISOString().substr(0, 10)
+      const t = new Date(date).toTimeString().substr(0, 8)
+
+      return `${d} ${t}`
     }
   }
 }

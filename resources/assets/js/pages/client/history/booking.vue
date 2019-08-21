@@ -50,7 +50,7 @@ export default {
     dialog: false,
     pagination: {
       descending: true,
-      sortBy: 'start_time'
+      sortBy: 'created_at.date'
     },
     headers: [
       { text: 'id', align: 'left', value: 'id' },
@@ -60,7 +60,7 @@ export default {
       { text: 'Pet', value: 'pet.name' },
       { text: 'Employee', value: 'employee.name' },
       { text: 'Status', value: 'status' },
-      { text: 'Booked on', value: 'created_at' }
+      { text: 'Booked on', value: 'created_at.date' }
 
     ]
   }),

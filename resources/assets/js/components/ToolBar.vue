@@ -89,8 +89,12 @@ export default {
     detail: 'authDetail',
     authenticated: 'authCheck',
     loaded: 'authLoaded',
-    user: 'authUser'
+    user: 'authUser',
+    company: 'companyDetail'
   }),
+  created () {
+    this.appName = this.company.name
+  },
 
   methods: {
     toggleDrawer () {
@@ -117,22 +121,25 @@ export default {
     },
     async refresh () {
       if (this.role.name === 'admin' || this.role.name === 'employee') {
-        await this.$store.dispatch('fetchClients')
-        await this.$store.dispatch('fetchEmployees')
-        await this.$store.dispatch('fetchCompany')
-        await this.$store.dispatch('fetchWorkingHours')
-        await this.$store.dispatch('fetchPets')
-        await this.$store.dispatch('fetchBookings')
-        await this.$store.dispatch('fetchPendingBookings')
-        await this.$store.dispatch('fetchServices')
+        this.$store.dispatch('fetchClients')
+        this.$store.dispatch('fetchEmployees')
+        this.$store.dispatch('fetchCompany')
+        this.$store.dispatch('fetchWorkingHours')
+        this.$store.dispatch('fetchPets')
+        this.$store.dispatch('fetchBookings')
+        this.$store.dispatch('fetchPendingBookings')
+        this.$store.dispatch('fetchServices')
       } else {
-        await this.$store.dispatch('fetchCompany')
-        await this.$store.dispatch('fetchWorkingHours')
-        await this.$store.dispatch('fetchServices')
-        await this.$store.dispatch('fetchClientPendingBookings', this.user.client.id)
-        await this.$store.dispatch('fetchClientBookings', this.user.client.id)
-        await this.$store.dispatch('fetchClientPets', this.user.client.id)
+        this.$store.dispatch('fetchCompany')
+        this.$store.dispatch('fetchWorkingHours')
+        this.$store.dispatch('fetchServices')
+        this.$store.dispatch('fetchClient', this.user.client)
+        this.$store.dispatch('fetchClientPendingBookings', this.user.client.id)
+        this.$store.dispatch('fetchClientBookings', this.user.client.id)
+        this.$store.dispatch('fetchClientPets', this.user.client.id)
       }
+      this.$store.dispatch('fetchUser')
+
     },
     accountMenuItemClicked (action) {
       switch (action) {

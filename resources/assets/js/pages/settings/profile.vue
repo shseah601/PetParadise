@@ -6,54 +6,53 @@
       </v-card-title>
       <v-card-text>
         <!-- Name -->
-        <text-input
+        <v-text-field
           v-model="form.name"
           :form="form"
           :label="$t('name')"
           :v-errors="errors"
-          :value.sync="form.name"
+          :rules="rules.name"
           counter="30"
           name="name"
-          v-validate="'required|max:30'"
-        ></text-input>
+        ></v-text-field>
 
         <!-- Email -->
-        <email-input
+        <v-text-field
+          v-model="form.email"
           :form="form"
           :label="$t('email')"
           :v-errors="errors"
-          :value.sync="form.email"
+          :rules="rules.email"
+          disabled
           name="email"
-          v-validate="'required|email'"
-        ></email-input>
+        ></v-text-field>
 
-        <text-input
+        <v-text-field
           v-model="form.phone"
           :form="form"
           label="Phone"
           :v-errors="errors"
-          :value.sync="form.phone"
+          :rules="rules.phone"
           counter
+          maxlength="11"
           name="phone"
-          v-validate="'required|max:11'"
-        ></text-input>
+        ></v-text-field>
         <template v-if="this.role.name == 'admin' || this.role.name == 'employee'">
-          <text-input
+          <v-text-field
             v-model="form.ic_no"
             :form="form"
             label="IC No"
             :v-errors="errors"
-            :value.sync="form.ic_no"
+            :rules="rules.ic_no"
             counter
             name="ic_no"
-            v-validate="'required|max:12'"
-          ></text-input>
+          ></v-text-field>
 
           <v-select
             v-model="form.gender"
             :items="gender"
-            :value.sync="form.gender"
             label="Gender"
+            :rules="rules.gender"
             required
           ></v-select>
           <v-menu
@@ -72,22 +71,23 @@
                 v-model="form.dob"
                 label="Date of Birth"
                 persistent-hint
+                :rules="rules.dob"
                 prepend-icon="event"
                 v-on="on"
               ></v-text-field>
             </template>
             <v-date-picker v-model="form.dob" no-title @input="dobMenu = false"></v-date-picker>
           </v-menu>
-          <v-textarea
-            v-model="form.address"
-            :form="form"
-            label="Address"
-            :v-errors="errors"
-            :value.sync="form.address"
-            counter
-            name="address"
-          ></v-textarea>
         </template>
+        <v-textarea
+          v-model="form.address"
+          :form="form"
+          label="Address"
+          :v-errors="errors"
+          :rules="rules.address"
+          counter
+          name="address"
+        ></v-textarea>
       </v-card-text>
       <v-card-actions>
         <submit-button :flat="true" :form="form" :label="$t('update')"></submit-button>
@@ -113,8 +113,35 @@ export default {
       phone: ''
     }),
     gender: ['M', 'F'],
-    dobMenu: false
+    dobMenu: false,
+    rules: {
+      name: [
+        v => !!v || 'Name is required',
+        v => (v && v.length <= 100) || 'Name must be less than 100 characters'
+      ],
+      phone: [
+        v => !!v || 'Phone is required',
+        v => /^(01)[0-46-9][0-9]{7,8}$/.test(v) || 'Phone must be valid'
+      ],
+      email: [
+        v => !!v || 'E-mail is required',
+        v => /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail must be valid'
+      ],
+      address: [
+        v => !!v || 'Address is required'
+      ],
+      ic_no: [
+        v => !!v || 'IC No is required',
+        v => /^\d{12}$/.test(v) || 'IC No must be 12 digits'
 
+      ],
+      gender: [
+        v => !!v || 'Gender is required'
+      ],
+      dob: [
+        v => !!v || 'Date of Birth is required'
+      ]
+    }
   }),
 
   computed: mapGetters({
@@ -130,9 +157,9 @@ export default {
     })
     this.form.name = this.detail.name
     this.form.phone = this.detail.phone
+    this.form.address = this.detail.address
     if (this.role.name === 'admin' || this.role.name === 'employee') {
       this.form.ic_no = this.detail.ic_no
-      this.form.address = this.detail.address
       this.form.gender = this.detail.gender
       this.form.dob = this.detail.dob
     }
@@ -144,16 +171,15 @@ export default {
 
       this.$emit('busy', true)
 
-      const { data } = await this.form.patch('/api/settings/profile')
+      this.form.patch('/api/settings/profile')
 
       if (this.role.name === 'admin') {
-        this.form.put('/api/admins/' + this.user.admin.id)
+        await this.form.put('/api/admins/' + this.user.admin.id)
       } else if (this.role.name === 'employee') {
-        this.form.put('/api/employees/' + this.user.employee.id)
+        await this.form.put('/api/employees/' + this.user.employee.id)
       } else {
-        this.form.put('/api/clients/' + this.user.client.id)
+        await this.form.put('/api/clients/' + this.user.client.id)
       }
-
       await this.$store.dispatch('fetchUser')
       this.$emit('busy', false)
 

@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\BookingRequest;
 use App\Booking;
+use App\Client;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\BookingCollection;
+use App\Notifications\AcceptBookingEmail;
+use App\Notifications\RejectBookingEmail;
+use App\User;
 
 class BookingController extends Controller
 {
@@ -48,8 +52,16 @@ class BookingController extends Controller
       $booking->service_id = $request->service_id;
       $booking->saveOrFail();
 
+      $client = Client::findOrFail($booking->client_id);
+      $user = User::findOrFail($client->user_id);
+      
+      if ($request->status == 'accepted') {
+        $user->notify(new AcceptBookingEmail());
+      } else {
+        $user->notify(new RejectBookingEmail());
+      }
       $booking = Booking::with(['client', 'pet', 'service', 'employee'])->find($booking->id);
-
+      
       return new BookingResource($booking);
     } catch (QueryException $ex) {
       return response()->json([

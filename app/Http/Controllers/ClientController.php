@@ -10,6 +10,7 @@ use App\Http\Requests\UserRequest;
 use App\Client;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientCollection;
+use App\Notifications\RegistrationEmail;
 use App\User;
 use Bouncer;
 use Illuminate\Support\Facades\Mail;
@@ -44,14 +45,15 @@ class ClientController extends Controller
       Bouncer::assign('client')->to($user);
     });
 
-    // send register email
-    $email = $request1->email;
-    $messageData = ['email' => $request1->email, 'name' => $request2->name];
-    Mail::send('emails.register', $messageData, function ($message) use ($email) {
-      $message->to($email)->subject('Registration with Pet Paradise');
-    });
+    // // send register email
+    // $email = $request1->email;
+    // $messageData = ['email' => $request1->email, 'name' => $request2->name];
+    // Mail::send('emails.register', $messageData, function ($message) use ($email) {
+    //   $message->to($email)->subject('Registration with Pet Paradise');
+    // });
 
     $client = Client::with(['user'])->find($client->id);
+    $client->user->notify(new RegistrationEmail());
 
     return new ClientResource($client);
   }

@@ -4,6 +4,7 @@ import Meta from 'vue-meta'
 import routes from './routes'
 import Router from 'vue-router'
 import { sync } from 'vuex-router-sync'
+import Axios from 'axios'
 
 Vue.use(Meta)
 Vue.use(Router)
@@ -31,6 +32,7 @@ function make (routes) {
 
   // Register before guard.
   router.beforeEach(async (to, from, next) => {
+    Axios.get('/api/user')
     if (!store.getters.authCheck && store.getters.authToken) {
       try {
         await store.dispatch('fetchUser')

@@ -51,7 +51,7 @@ export default {
     busy: false,
     pagination: {
       descending: true,
-      sortBy: 'updated_at'
+      sortBy: 'created_at.date'
     },
     headers: [
       { text: 'id', align: 'left', value: 'id' },
@@ -60,7 +60,7 @@ export default {
       { text: 'End Time', value: 'end_time' },
       { text: 'Pet', value: 'pet.name' },
       { text: 'Status', value: 'status' },
-      { text: 'Booked on', value: 'created_at' },
+      { text: 'Booked on', value: 'created_at.date' },
       { text: 'Actions', value: 'id', sortable: false }
 
     ]

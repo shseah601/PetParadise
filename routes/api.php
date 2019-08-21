@@ -80,6 +80,9 @@ Route::middleware(['auth:api', 'can:manage-admin-panel'])->group(function () {
     'store',
     'update'
   ]);
+  Route::apiResource('employees', 'EmployeeController')->only([
+    'update'
+  ]);
 });
 
 //admin, employee, client
@@ -90,6 +93,9 @@ Route::middleware(['auth:api', 'can:manage-bookings'])->group(function () {
   ]);
   Route::apiResource('pendingBookings', 'PendingBookingController')->only([
     'store',
+    'update'
+  ]);
+  Route::apiResource('clients', 'ClientController')->only([
     'update'
   ]);
 });

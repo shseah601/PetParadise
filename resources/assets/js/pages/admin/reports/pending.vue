@@ -22,6 +22,8 @@
           <td class="text-xs-left">{{ props.item.client.name }}</td>
           <td class="text-xs-left">{{ props.item.pet.name }}</td>
           <td class="text-xs-left">{{ props.item.status }}</td>
+          <td class="text-xs-left">{{ getISOString(props.item.created_at.date) }}</td>
+
           <td class="justify-center layout px-0">
             <v-icon medium @click="acceptItem(props.item)">done</v-icon>
             <v-icon medium @click="rejectItem(props.item)">clear</v-icon>
@@ -52,7 +54,7 @@ export default {
     busy: false,
     pagination: {
       descending: true,
-      sortBy: 'start_time'
+      sortBy: 'created_at.date'
     },
     headers: [
       { text: 'id', align: 'left', value: 'id' },
@@ -62,6 +64,7 @@ export default {
       { text: 'Client', value: 'client.name' },
       { text: 'Pet', value: 'pet.name' },
       { text: 'Status', value: 'status' },
+      { text: 'Booked on', value: 'created_at.date' },
       { text: 'Actions', value: 'id', sortable: false }
 
     ]
@@ -80,6 +83,12 @@ export default {
     }
   },
   methods: {
+    getISOString (date) {
+      const d = new Date(date).toISOString().substr(0, 10)
+      const t = new Date(date).toTimeString().substr(0, 8)
+
+      return `${d} ${t}`
+    },
     async acceptItem (pendingBooking) {
       var r = confirm('Are you sure you want to accept this item?')
       if (r) {

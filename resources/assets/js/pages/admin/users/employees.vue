@@ -66,6 +66,7 @@
                           v-model="editedItem.dob"
                           label="Date of Birth"
                           persistent-hint
+                          :rules="rules.dob"
                           prepend-icon="event"
                           v-on="on"
                         ></v-text-field>
@@ -210,6 +211,9 @@ export default {
       ],
       gender: [
         v => !!v || 'Gender is required'
+      ],
+      dob: [
+        v => !!v || 'Date of Birth is required'
       ]
     },
     dobMenu: false

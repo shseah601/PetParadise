@@ -274,6 +274,80 @@
 
                 <v-stepper-content step="3">
                   <v-card flat>
+                    <v-card-title primary-title>
+                      <v-spacer></v-spacer>
+                      <v-dialog v-model="petDialog" max-width="500px">
+                        <template v-slot:activator="{ on }">
+                          <v-btn color="primary" dark class="mb-2" v-on="on">
+                            <v-icon left dark>add_circle</v-icon>New
+                          </v-btn>
+                        </template>
+                        <v-card>
+                          <v-form ref="form" @submit.prevent="submit">
+                            <v-card-title>
+                              <span class="headline">{{ formTitle }}</span>
+                            </v-card-title>
+                            <v-card-text>
+                              <v-container grid-list-md>
+                                <v-layout wrap>
+                                  <v-flex xs12 sm12 md12>
+                                    <v-text-field
+                                      v-model="editedItem.name"
+                                      :counter="100"
+                                      :rules="rules.name"
+                                      label="Pet Name"
+                                      required
+                                    ></v-text-field>
+                                  </v-flex>
+                                  <v-flex xs12 sm12 md12>
+                                    <v-text-field
+                                      v-model="editedItem.type"
+                                      :rules="rules.type"
+                                      label="Type"
+                                      required
+                                    ></v-text-field>
+                                  </v-flex>
+                                  <v-flex xs12 sm12 md12>
+                                    <v-select
+                                      v-model="editedItem.gender"
+                                      :items="gender"
+                                      :rules="rules.gender"
+                                      label="Gender"
+                                      required
+                                    ></v-select>
+                                  </v-flex>
+                                  <v-flex xs12 sm12 md12>
+                                    <v-text-field
+                                      v-model="editedItem.age"
+                                      :rules="rules.age"
+                                      type="number"
+                                      label="Age"
+                                      required
+                                    ></v-text-field>
+                                  </v-flex>
+                                </v-layout>
+                              </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                :disabled="busy"
+                                color="blue darken-1"
+                                flat
+                                @click="close"
+                              >Cancel</v-btn>
+                              <v-btn
+                                :loading="busy"
+                                :disabled="busy"
+                                color="blue darken-1"
+                                flat
+                                @click="save"
+                              >Save</v-btn>
+                            </v-card-actions>
+                          </v-form>
+                        </v-card>
+                      </v-dialog>
+                    </v-card-title>
                     <v-layout wrap>
                       <v-flex d-flex xs12 sm6 md4 v-for="(item, i) in client.pets" :key="i">
                         <v-card>
@@ -418,6 +492,7 @@ export default {
     return { title: this.$t('services') }
   },
   data: () => ({
+    petDialog: false,
     dialog: false,
     dobMenu: false,
     step: 0,
@@ -439,6 +514,35 @@ export default {
     selectedPet: {
       name: ''
     },
+    editedItem: {
+      name: '',
+      type: '',
+      gender: '',
+      age: ''
+    },
+    defaultItem: {
+      name: '',
+      type: '',
+      gender: '',
+      age: ''
+    },
+    gender: ['M', 'F'],
+    form: Object.assign({}, this.defaultItem),
+    rules: {
+      name: [
+        v => !!v || 'Name is required',
+        v => (v && v.length <= 100) || 'Name must be less than 100 characters'
+      ],
+      type: [
+        v => !!v || 'Type is required'
+      ],
+      gender: [
+        v => !!v || 'Gender is required'
+      ],
+      Age: [
+        v => !!v || 'Age is required'
+      ]
+    },
     startWeek: null,
     endWeek: null,
     map: new Map(),
@@ -454,6 +558,9 @@ export default {
     ]
   }),
   computed: {
+    formTitle () {
+      return this.editedIndex === -1 ? 'New' : 'Edit'
+    },
     ...mapGetters([
       'services',
       'bookings',
@@ -646,6 +753,33 @@ export default {
     selectPet (pet) {
       this.selectedPet = pet
       this.nextStep()
+    },
+    editItem (item) {
+      this.editedIndex = this.pets.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.petDialog = true
+    },
+    close () {
+      this.petDialog = false
+      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedIndex = -1
+      this.$refs.form.reset()
+    },
+
+    async save () {
+      if (!this.$refs.form.validate()) return
+      var newItem = Object.assign({}, this.editedItem)
+      Object.assign(newItem, { client_id: this.client.id })
+      this.busy = true
+      await this.$store.dispatch('createPet', newItem)
+      this.busy = false
+      this.$store.dispatch('responseMessage', {
+        type: 'success',
+        text: 'Successfully Add New Pet'
+      })
+      this.$store.dispatch('fetchClient', this.client)
+
+      this.close()
     },
     checkSelectedItemsGrooming () {
       return !!this.selectedService && !!this.selectedTime && !!this.selectedPet

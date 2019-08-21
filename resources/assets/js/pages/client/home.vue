@@ -34,7 +34,7 @@
                     <td v-if="props.item.status == 1"
                       class="text-xs-right"
                     >{{ getTimeRange(props.item.start_time, props.item.end_time) }}</td>
-                    <td v-else>Closed</td>
+                    <td v-else class="text-xs-right">Closed</td>
                   </template>
                 </v-data-table>
               </v-card-text>

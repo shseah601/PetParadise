@@ -7,7 +7,8 @@ use App\Http\Requests\PendingBookingRequest;
 use App\PendingBooking;
 use App\Http\Resources\PendingBookingResource;
 use App\Http\Resources\PendingBookingCollection;
-use App\Notifications\TemplateEmail;
+use App\Notifications\CreatedBookingEmail;
+use App\User;
 
 class PendingBookingController extends Controller
 {
@@ -47,7 +48,7 @@ class PendingBookingController extends Controller
       $pendingBooking->saveOrFail();
 
       $pendingBooking = PendingBooking::with(['client', 'pet', 'service'])->find($pendingBooking->id);
-      // auth()->user()->notify(new TemplateEmail());
+      auth()->user()->notify(new CreatedBookingEmail());
       
       return new PendingBookingResource($pendingBooking);
     } catch (QueryException $ex) {
